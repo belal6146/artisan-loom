@@ -115,11 +115,12 @@ export default function AIStyleExplorerTab() {
 
           <div className="space-y-2">
             <Label htmlFor="style">Art Style</Label>
-            <Select value={style} onValueChange={setStyle}>
+            <Select value={style ?? "none"} onValueChange={(v) => setStyle(v === "none" ? undefined : v)}>
               <SelectTrigger aria-label="Choose an art style">
                 <SelectValue placeholder="Select style" />
               </SelectTrigger>
               <SelectContent className="bg-background border z-50">
+                <SelectItem value="none">Choose a style...</SelectItem>
                 {STYLE_OPTIONS.map((option) => (
                   <SelectItem key={option.value} value={option.value}>
                     {option.label}

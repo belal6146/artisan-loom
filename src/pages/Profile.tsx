@@ -9,8 +9,7 @@ import { ProfileTabs } from "@/features/profile/tabs/ProfileTabs";
 import { InsightsTab } from "@/features/profile/insights/InsightsTab";
 import AIStyleExplorerTab from "@/features/profile/AIStyleExplorerTab";
 import { useAuthStore } from "@/store/auth";
-import { getUserByHandle } from "@/lib/users";
-import { artworkAdapter } from "@/lib/data-service";
+import { userAdapter, artworkAdapter } from "@/lib/data-service";
 import { log } from "@/lib/log";
 import type { User, Artwork } from "@/types";
 
@@ -22,27 +21,34 @@ const SimpleTab = ({ children }: { children: React.ReactNode }) => (
 type TabValue = "overview" | "artwork" | "feed" | "collaborations" | "connections" | "insights" | "ai-explorer";
 
 export default function Profile() {
-  const { id: handle } = useParams();
+  const { handle = "" } = useParams<{ handle: string }>();
   const [artworks, setArtworks] = useState<Artwork[]>([]);
   const [activeTab, setActiveTab] = useState<TabValue>("overview");
   const { user: currentUser } = useAuthStore();
 
   // Use React Query for user data with handle lookup
   const { data: user, isLoading, error } = useQuery({
-    queryKey: ['user', handle],
+    queryKey: ['profile', handle],
     queryFn: async () => {
-      if (!handle) throw new Error('No handle provided');
+      if (!handle) throw Object.assign(new Error('No handle provided'), { code: 'INVALID_HANDLE' });
       
       log.info("Profile lookup", { handle });
-      const user = await getUserByHandle(handle);
       
-      if (!user) {
-        log.warn("User not found", { handle });
-        throw new Error(`User not found: ${handle}`);
+      // Try ID first, then username
+      const byId = await userAdapter.getById(handle).catch(() => null);
+      if (byId) {
+        log.info("Profile loaded by ID", { userId: byId.id, username: byId.username });
+        return byId;
       }
       
-      log.info("Profile loaded", { userId: user.id, username: user.username });
-      return user;
+      const byUsername = await userAdapter.getByUsername(handle).catch(() => null);
+      if (byUsername) {
+        log.info("Profile loaded by username", { userId: byUsername.id, username: byUsername.username });
+        return byUsername;
+      }
+      
+      log.warn("User not found", { handle });
+      throw Object.assign(new Error(`User not found: ${handle}`), { code: 'NOT_FOUND' });
     },
     enabled: !!handle,
     retry: false
@@ -83,7 +89,7 @@ export default function Profile() {
     return (
       <AppLayout>
         <div className="py-8">
-          <div className="max-w-6xl mx-auto flex flex-col items-center justify-center min-h-[400px] text-center space-y-4">
+          <div className="max-w-7xl mx-auto flex flex-col items-center justify-center min-h-[400px] text-center space-y-4">
             <div className="text-6xl font-bold text-muted-foreground">404</div>
             <h1 className="text-2xl font-semibold">User not found</h1>
             <p className="text-muted-foreground">
@@ -147,16 +153,20 @@ export default function Profile() {
 
   return (
     <AppLayout>
-      <div className="py-8 space-y-8">
+      <div className="py-8 space-y-8 max-w-7xl mx-auto">
         <div className="grid md:grid-cols-[200px,1fr] gap-6 items-start">
           <div className="flex flex-col items-center md:items-start space-y-4">
             <img 
               src={user.avatar || '/placeholder.svg'} 
               alt={user.name}
-              className="size-32 rounded-2xl object-cover shadow-lg"
+              width={128}
+              height={128}
+              loading="lazy"
+              decoding="async"
+              className="size-32 rounded-2xl object-cover shadow-lg ring-1 ring-border/50"
             />
             {isOwner && (
-              <Button variant="outline" size="sm">
+              <Button variant="outline" size="sm" className="focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2">
                 Edit Profile
               </Button>
             )}
@@ -164,7 +174,7 @@ export default function Profile() {
           
           <div className="space-y-4">
             <div>
-              <h1 className="text-3xl font-bold">{user.name}</h1>
+              <h1 className="text-4xl font-semibold tracking-tight">{user.name}</h1>
               <p className="text-muted-foreground">@{user.username}</p>
               {user.location && (
                 <p className="text-sm text-muted-foreground mt-1">{user.location}</p>
@@ -178,7 +188,7 @@ export default function Profile() {
             </div>
             
             {user.bio && (
-              <p className="text-muted-foreground">{user.bio}</p>
+              <p className="text-muted-foreground prose prose-neutral max-w-none">{user.bio}</p>
             )}
           </div>
         </div>

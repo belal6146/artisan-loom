@@ -103,15 +103,52 @@ class LocalStorageAdapter<T extends { id: string }, CreateT, UpdateT = Partial<T
   }
 }
 
+// Enhanced user adapter with username lookup
+class UserAdapter extends LocalStorageAdapter<User, CreateUser, UpdateUser> {
+  async getByUsername(username: string): Promise<User | null> {
+    const users = await this.getAll();
+    return users.find(u => u.username === username) || null;
+  }
+  
+  async upsert(data: CreateUser & { id: string }): Promise<User> {
+    const existing = await this.getById(data.id);
+    if (existing) {
+      return await this.update(data.id, data) || existing;
+    }
+    return await this.create(data);
+  }
+  
+  async listByUser(userId: string): Promise<User[]> {
+    const users = await this.getAll();
+    return users.filter(u => u.id === userId);
+  }
+}
+
+// Enhanced artwork adapter
+class ArtworkAdapter extends LocalStorageAdapter<Artwork, CreateArtwork, UpdateArtwork> {
+  async listByUser(userId: string): Promise<Artwork[]> {
+    const artworks = await this.getAll();
+    return artworks.filter(a => a.userId === userId);
+  }
+}
+
+// Enhanced purchase adapter  
+class PurchaseAdapter extends LocalStorageAdapter<Purchase, CreatePurchase> {
+  async listByBuyer(buyerId: string): Promise<Purchase[]> {
+    const purchases = await this.getAll();
+    return purchases.filter(p => p.buyerId === buyerId);
+  }
+}
+
 // Specialized adapters
-export const userAdapter = new LocalStorageAdapter<User, CreateUser, UpdateUser>(STORAGE_KEYS.USERS);
-export const artworkAdapter = new LocalStorageAdapter<Artwork, CreateArtwork, UpdateArtwork>(STORAGE_KEYS.ARTWORKS);
+export const userAdapter = new UserAdapter(STORAGE_KEYS.USERS);
+export const artworkAdapter = new ArtworkAdapter(STORAGE_KEYS.ARTWORKS);
+export const purchaseAdapter = new PurchaseAdapter(STORAGE_KEYS.PURCHASES);
 export const postAdapter = new LocalStorageAdapter<Post, CreatePost>(STORAGE_KEYS.POSTS);
 export const commentAdapter = new LocalStorageAdapter<Comment, CreateComment>(STORAGE_KEYS.COMMENTS);
 export const collaborationAdapter = new LocalStorageAdapter<Collaboration, CreateCollaboration>(STORAGE_KEYS.COLLABORATIONS);
 export const resourceAdapter = new LocalStorageAdapter<Resource, CreateResource, Partial<Resource>>(STORAGE_KEYS.RESOURCES);
 export const eventAdapter = new LocalStorageAdapter<Event, CreateEvent>(STORAGE_KEYS.EVENTS);
-export const purchaseAdapter = new LocalStorageAdapter<Purchase, CreatePurchase>(STORAGE_KEYS.PURCHASES);
 
 // Additional methods for complex operations
 export const dataService = {

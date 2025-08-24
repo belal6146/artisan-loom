@@ -43,7 +43,7 @@ const App = () => (
             <Route path="/" element={<AuthGuard><ExploreHome /></AuthGuard>} />
             <Route path="/explore" element={<Navigate to="/" replace />} />
             <Route path="/feed" element={<Navigate to="/" replace />} />
-            <Route path="/profile/:username" element={<AuthGuard><Profile /></AuthGuard>} />
+            <Route path="/profile/:handle" element={<AuthGuard><Profile /></AuthGuard>} />
             <Route path="/collaborate" element={<AuthGuard><Collaborate /></AuthGuard>} />
             <Route path="/learn" element={<AuthGuard><Learn /></AuthGuard>} />
             <Route path="/experience" element={<AuthGuard><Experience /></AuthGuard>} />
