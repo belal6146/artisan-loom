@@ -9,7 +9,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useAuthStore } from "@/store/auth";
-import { Home, Compass, Users, BookOpen, Camera, Mail, LogOut, User } from "lucide-react";
+import { Home, Compass, Users, BookOpen, Camera, Mail, LogOut, User, TrendingUp } from "lucide-react";
 
 const navigation = [
   { name: "Feed", href: "/feed", icon: Home },
@@ -17,6 +17,7 @@ const navigation = [
   { name: "Collaborate", href: "/collaborate", icon: Users },
   { name: "Learn", href: "/learn", icon: BookOpen },
   { name: "Experience", href: "/experience", icon: Camera },
+  { name: "Insights", href: "/insights", icon: TrendingUp },
   { name: "Contact", href: "/contact", icon: Mail },
 ];
 

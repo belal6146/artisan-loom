@@ -13,6 +13,7 @@ import Collaborate from "./pages/Collaborate";
 import Learn from "./pages/Learn";
 import Experience from "./pages/Experience";
 import Contact from "./pages/Contact";
+import Insights from "./pages/Insights";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient({
@@ -49,6 +50,7 @@ const App = () => (
             <Route path="/learn" element={<AuthGuard><Learn /></AuthGuard>} />
             <Route path="/experience" element={<AuthGuard><Experience /></AuthGuard>} />
             <Route path="/contact" element={<AuthGuard><Contact /></AuthGuard>} />
+            <Route path="/insights" element={<AuthGuard><Insights /></AuthGuard>} />
             
             {/* Catch-all route */}
             <Route path="*" element={<NotFound />} />

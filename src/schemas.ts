@@ -32,6 +32,13 @@ export const CreateUserSchema = UserSchema.omit({
   createdAt: true,
 });
 
+export const UpdateUserSchema = z.object({
+  name: z.string().min(1).max(100).optional(),
+  bio: z.string().max(500).optional(),
+  birthday: ISOSchema.optional(),
+  avatar: z.string().url().optional(),
+});
+
 // Artwork schemas
 export const ArtworkSchema = z.object({
   id: IDSchema,
@@ -39,7 +46,7 @@ export const ArtworkSchema = z.object({
   title: z.string().min(1).max(200),
   description: z.string().max(1000).optional(),
   imageUrl: z.string().url(),
-  category: z.enum(["painting", "sculpture", "handicraft", "other"]),
+  category: z.enum(["painting", "sculpture", "handicraft", "digital", "photography", "other"]),
   forSale: z.boolean(),
   price: MoneySchema.optional(),
   privacy: z.enum(["public", "private"]),
@@ -52,6 +59,16 @@ export const CreateArtworkSchema = ArtworkSchema.omit({
   createdAt: true,
 });
 
+export const UpdateArtworkSchema = z.object({
+  title: z.string().min(1).max(200).optional(),
+  description: z.string().max(1000).optional(),
+  category: z.enum(["painting", "sculpture", "handicraft", "digital", "photography", "other"]).optional(),
+  forSale: z.boolean().optional(),
+  price: MoneySchema.optional(),
+  privacy: z.enum(["public", "private"]).optional(),
+  location: z.string().max(100).optional(),
+});
+
 // Post schemas
 export const PostSchema = z.object({
   id: IDSchema,
@@ -62,6 +79,7 @@ export const PostSchema = z.object({
   createdAt: ISOSchema,
   likes: z.number().min(0),
   commentIds: z.array(IDSchema),
+  likedBy: z.array(IDSchema),
 });
 
 export const CreatePostSchema = PostSchema.omit({
@@ -69,22 +87,28 @@ export const CreatePostSchema = PostSchema.omit({
   createdAt: true,
   likes: true,
   commentIds: true,
+  likedBy: true,
 });
 
 // Comment schemas
 export const CommentSchema = z.object({
   id: IDSchema,
-  postId: IDSchema,
+  postId: IDSchema.optional(),
+  artworkId: IDSchema.optional(),
+  collaborationId: IDSchema.optional(),
+  resourceId: IDSchema.optional(),
   authorId: IDSchema,
   text: z.string().min(1).max(500),
   createdAt: ISOSchema,
   likes: z.number().min(0),
+  likedBy: z.array(IDSchema),
 });
 
 export const CreateCommentSchema = CommentSchema.omit({
   id: true,
   createdAt: true,
   likes: true,
+  likedBy: true,
 });
 
 // Collaboration schemas
@@ -111,6 +135,29 @@ export const CreateCollaborationSchema = CollaborationSchema.omit({
   createdAt: true,
 });
 
+// Learning Resource schemas
+export const ResourceSchema = z.object({
+  id: IDSchema,
+  title: z.string().min(1).max(200),
+  description: z.string().max(1000).optional(),
+  type: z.enum(["video", "image", "pdf"]),
+  url: z.string().url(),
+  tags: z.array(z.string().min(1).max(30)),
+  authorId: IDSchema,
+  createdAt: ISOSchema,
+  likes: z.number().min(0),
+  commentIds: z.array(IDSchema),
+  likedBy: z.array(IDSchema),
+});
+
+export const CreateResourceSchema = ResourceSchema.omit({
+  id: true,
+  createdAt: true,
+  likes: true,
+  commentIds: true,
+  likedBy: true,
+});
+
 // Event schemas
 export const EventSchema = z.object({
   id: IDSchema,
@@ -122,6 +169,8 @@ export const EventSchema = z.object({
   url: z.string().url().optional(),
   description: z.string().max(1000).optional(),
   createdAt: ISOSchema,
+  attendees: z.array(IDSchema),
+  maxAttendees: z.number().optional(),
 }).refine(data => new Date(data.endsAt) > new Date(data.startsAt), {
   message: "End time must be after start time",
   path: ["endsAt"],
@@ -175,6 +224,15 @@ export const SignupCredentialsSchema = z.object({
   username: z.string().min(3).max(30).regex(/^[a-zA-Z0-9_]+$/),
 });
 
+// Contact schemas
+export const ContactSchema = z.object({
+  name: z.string().min(1).max(100),
+  email: z.string().email(),
+  subject: z.string().min(1).max(200),
+  message: z.string().min(10).max(1000),
+  category: z.enum(["general", "support", "partnership", "feedback"]),
+});
+
 // API Response schemas
 export const APIResponseSchema = <T extends z.ZodTypeAny>(dataSchema: T) =>
   z.object({
@@ -190,14 +248,18 @@ export const APIErrorSchema = z.object({
 // Utility type extractors
 export type User = z.infer<typeof UserSchema>;
 export type CreateUser = z.infer<typeof CreateUserSchema>;
+export type UpdateUser = z.infer<typeof UpdateUserSchema>;
 export type Artwork = z.infer<typeof ArtworkSchema>;
 export type CreateArtwork = z.infer<typeof CreateArtworkSchema>;
+export type UpdateArtwork = z.infer<typeof UpdateArtworkSchema>;
 export type Post = z.infer<typeof PostSchema>;
 export type CreatePost = z.infer<typeof CreatePostSchema>;
 export type Comment = z.infer<typeof CommentSchema>;
 export type CreateComment = z.infer<typeof CreateCommentSchema>;
 export type Collaboration = z.infer<typeof CollaborationSchema>;
 export type CreateCollaboration = z.infer<typeof CreateCollaborationSchema>;
+export type Resource = z.infer<typeof ResourceSchema>;
+export type CreateResource = z.infer<typeof CreateResourceSchema>;
 export type Event = z.infer<typeof EventSchema>;
 export type CreateEvent = z.infer<typeof CreateEventSchema>;
 export type Purchase = z.infer<typeof PurchaseSchema>;
@@ -205,3 +267,4 @@ export type CreatePurchase = z.infer<typeof CreatePurchaseSchema>;
 export type AuthUser = z.infer<typeof AuthUserSchema>;
 export type LoginCredentials = z.infer<typeof LoginCredentialsSchema>;
 export type SignupCredentials = z.infer<typeof SignupCredentialsSchema>;
+export type ContactForm = z.infer<typeof ContactSchema>;
