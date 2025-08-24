@@ -2,6 +2,7 @@ import { useState, useEffect, Suspense, lazy } from "react";
 import { useParams } from "react-router-dom";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
+import { Button } from "@/components/ui/button";
 import { ProfileHeader } from "@/features/profile/header/ProfileHeader";
 import { ProfileTabs } from "@/features/profile/tabs/ProfileTabs";
 import { useAuthStore } from "@/store/auth";
@@ -24,6 +25,7 @@ export default function Profile() {
   const [user, setUser] = useState<User | null>(null);
   const [artworks, setArtworks] = useState<Artwork[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [notFound, setNotFound] = useState(false);
   const [activeTab, setActiveTab] = useState<TabValue>("overview");
   const { user: currentUser } = useAuthStore();
 
@@ -34,12 +36,14 @@ export default function Profile() {
     const loadProfile = async () => {
       if (!username) return;
       setIsLoading(true);
+      setNotFound(false);
       try {
         const users = await userAdapter.getAll();
         const profileUser = users.find(u => u.username === username);
         
         if (!profileUser) {
           log.error("User not found", { username });
+          setNotFound(true);
           return;
         }
 
@@ -49,6 +53,7 @@ export default function Profile() {
         log.info("Profile loaded", { userId: profileUser.id, username });
       } catch (error) {
         log.error("Failed to load profile", { username, error: error.message });
+        setNotFound(true);
       } finally {
         setIsLoading(false);
       }
@@ -78,12 +83,31 @@ export default function Profile() {
     setArtworks(userArtworks);
   };
 
-  if (isLoading || !user) {
+  if (isLoading) {
     return (
       <AppLayout>
         <div className="container py-8">
           <div className="max-w-4xl mx-auto flex items-center justify-center min-h-[400px]">
             <LoadingSpinner size="lg" />
+          </div>
+        </div>
+      </AppLayout>
+    );
+  }
+
+  if (notFound || !user) {
+    return (
+      <AppLayout>
+        <div className="container py-8">
+          <div className="max-w-4xl mx-auto flex flex-col items-center justify-center min-h-[400px] text-center space-y-4">
+            <div className="text-6xl font-bold text-muted-foreground">404</div>
+            <h1 className="text-2xl font-semibold">User not found</h1>
+            <p className="text-muted-foreground">
+              The profile <span className="font-mono bg-muted px-2 py-1 rounded">@{username}</span> doesn't exist or has been removed.
+            </p>
+            <Button onClick={() => window.history.back()} variant="outline">
+              Go Back
+            </Button>
           </div>
         </div>
       </AppLayout>
