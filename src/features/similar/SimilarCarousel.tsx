@@ -74,13 +74,8 @@ export const SimilarCarousel = ({ artworkId, query, imageUrl, className }: Simil
   const canScrollLeft = currentIndex > 0;
   const canScrollRight = currentIndex < Math.max(0, results.length - 4);
 
-  const scrollLeft = () => {
-    setCurrentIndex(Math.max(0, currentIndex - 1));
-  };
-
-  const scrollRight = () => {
-    setCurrentIndex(Math.min(results.length - 4, currentIndex + 1));
-  };
+  const scrollLeft = () => setCurrentIndex(Math.max(0, currentIndex - 1));
+  const scrollRight = () => setCurrentIndex(Math.min(results.length - 4, currentIndex + 1));
 
   if (!artworkId && !query && !imageUrl) return null;
 
@@ -117,20 +112,10 @@ export const SimilarCarousel = ({ artworkId, query, imageUrl, className }: Simil
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-lg font-semibold">Similar Artworks</h3>
         <div className="flex gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={scrollLeft}
-            disabled={!canScrollLeft}
-          >
+          <Button variant="outline" size="sm" onClick={scrollLeft} disabled={!canScrollLeft}>
             <ChevronLeft className="h-4 w-4" />
           </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={scrollRight}
-            disabled={!canScrollRight}
-          >
+          <Button variant="outline" size="sm" onClick={scrollRight} disabled={!canScrollRight}>
             <ChevronRight className="h-4 w-4" />
           </Button>
         </div>
@@ -154,10 +139,7 @@ export const SimilarCarousel = ({ artworkId, query, imageUrl, className }: Simil
                     loading="lazy"
                   />
                   <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all rounded-lg flex items-center justify-center">
-                    <Button
-                      size="sm"
-                      className="opacity-0 group-hover:opacity-100 transition-all"
-                    >
+                    <Button size="sm" className="opacity-0 group-hover:opacity-100 transition-all">
                       <Eye className="h-4 w-4 mr-2" />
                       View
                     </Button>
@@ -167,9 +149,7 @@ export const SimilarCarousel = ({ artworkId, query, imageUrl, className }: Simil
                 <div className="mt-2 space-y-1">
                   <h4 className="font-medium text-sm truncate">{artwork.title}</h4>
                   {author && (
-                    <p className="text-xs text-muted-foreground truncate">
-                      by {author.name}
-                    </p>
+                    <p className="text-xs text-muted-foreground truncate">by {author.name}</p>
                   )}
                   <div className="text-xs text-muted-foreground">
                     {Math.round(result.score * 100)}% similar

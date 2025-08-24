@@ -36,34 +36,23 @@ export const RemixModal = ({ artwork, isOpen, onClose }: RemixModalProps) => {
   const { toast } = useToast();
 
   const handleRemix = async () => {
-    if (!prompt.trim()) {
+    if (!prompt.trim() || !user) return;
+
+    const moderationResult = await aiClient.moderate({ text: prompt });
+    if (!moderationResult.ok) {
       toast({
         variant: "destructive",
-        title: "Prompt required",
-        description: "Please enter a prompt to remix the image.",
+        title: "Content blocked",
+        description: "Your prompt contains content that isn't allowed.",
       });
       return;
     }
-
-    if (!user) return;
 
     setIsGenerating(true);
     setProgress(0);
     setResult(null);
 
     try {
-      // Check moderation first
-      const moderationResult = await aiClient.moderate({ text: prompt });
-      if (!moderationResult.ok) {
-        toast({
-          variant: "destructive",
-          title: "Content blocked",
-          description: "Your prompt contains content that isn't allowed.",
-        });
-        return;
-      }
-
-      // Simulate progress
       const progressInterval = setInterval(() => {
         setProgress(prev => Math.min(prev + 15, 90));
       }, 300);
@@ -82,11 +71,7 @@ export const RemixModal = ({ artwork, isOpen, onClose }: RemixModalProps) => {
       setProgress(100);
       setResult(generatedImage.url);
       
-      log.info("Image remixed successfully", { artworkId: artwork.id, prompt: fullPrompt });
-      toast({
-        title: "Remix complete!",
-        description: "Your remixed image is ready.",
-      });
+      toast({ title: "Remix complete!", description: "Your remixed image is ready." });
     } catch (error) {
       log.error("Failed to remix image", { error: error.message });
       toast({
@@ -119,11 +104,7 @@ export const RemixModal = ({ artwork, isOpen, onClose }: RemixModalProps) => {
         },
       });
 
-      toast({
-        title: "Remix saved!",
-        description: "Your remixed artwork has been saved as a draft.",
-      });
-      
+      toast({ title: "Remix saved!", description: "Your remixed artwork has been saved as a draft." });
       onClose();
     } catch (error) {
       log.error("Failed to save remix", { error: error.message });
@@ -146,26 +127,14 @@ export const RemixModal = ({ artwork, isOpen, onClose }: RemixModalProps) => {
           <div className="grid grid-cols-2 gap-4">
             <div>
               <Label>Original</Label>
-              <img
-                src={artwork.imageUrl}
-                alt={artwork.title}
-                className="w-full rounded-lg border"
-                loading="lazy"
-              />
+              <img src={artwork.imageUrl} alt={artwork.title} className="w-full rounded-lg border" loading="lazy" />
             </div>
             <div>
               <Label>Preview</Label>
               {result ? (
                 <div className="space-y-2">
-                  <img
-                    src={result}
-                    alt="Remixed artwork"
-                    className="w-full rounded-lg border"
-                    loading="lazy"
-                  />
-                  <div className="text-xs text-muted-foreground">
-                    ⚡ AI-generated remix
-                  </div>
+                  <img src={result} alt="Remixed artwork" className="w-full rounded-lg border" loading="lazy" />
+                  <div className="text-xs text-muted-foreground">⚡ AI-generated remix</div>
                 </div>
               ) : (
                 <div className="w-full aspect-square bg-muted rounded-lg flex items-center justify-center">
@@ -183,18 +152,12 @@ export const RemixModal = ({ artwork, isOpen, onClose }: RemixModalProps) => {
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}
             />
-            <FieldHint>
-              Describe how you want to modify the original image
-            </FieldHint>
+            <FieldHint>Describe how you want to modify the original image</FieldHint>
           </div>
 
           <div className="space-y-2">
             <Label>Style</Label>
-            <ChipGroup
-              options={IMAGE_STYLES}
-              selected={selectedStyles}
-              onChange={setSelectedStyles}
-            />
+            <ChipGroup options={IMAGE_STYLES} selected={selectedStyles} onChange={setSelectedStyles} />
           </div>
 
           <div className="space-y-2">
@@ -209,28 +172,14 @@ export const RemixModal = ({ artwork, isOpen, onClose }: RemixModalProps) => {
 
           <div className="space-y-2">
             <Label>Strength: {strength[0]}</Label>
-            <Slider
-              value={strength}
-              onValueChange={setStrength}
-              min={0.1}
-              max={1}
-              step={0.1}
-            />
-            <FieldHint>
-              Lower values stay closer to the original image
-            </FieldHint>
+            <Slider value={strength} onValueChange={setStrength} min={0.1} max={1} step={0.1} />
+            <FieldHint>Lower values stay closer to the original image</FieldHint>
           </div>
 
-          {isGenerating && (
-            <ProgressBar value={progress} showText />
-          )}
+          {isGenerating && <ProgressBar value={progress} showText />}
 
           <div className="flex gap-2">
-            <Button
-              onClick={handleRemix}
-              disabled={isGenerating || !prompt.trim()}
-              className="flex-1"
-            >
+            <Button onClick={handleRemix} disabled={isGenerating || !prompt.trim()} className="flex-1">
               <Wand2 className="h-4 w-4 mr-2" />
               {isGenerating ? "Remixing..." : "Remix"}
             </Button>

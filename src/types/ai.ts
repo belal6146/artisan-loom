@@ -59,21 +59,6 @@ export interface SimilarSearchResult {
   };
 }
 
-export interface AIJob {
-  id: ID;
-  type: "generate-image" | "tag-image" | "embed" | "moderate";
-  status: "pending" | "running" | "completed" | "failed";
-  progress: number;
-  result?: unknown;
-  error?: string;
-  createdAt: string;
-}
-
-export interface VectorSearchResult {
-  id: ID;
-  score: number;
-  meta: Record<string, unknown>;
-}
 
 // Style presets for image generation
 export const IMAGE_STYLES = [

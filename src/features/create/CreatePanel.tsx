@@ -15,7 +15,7 @@ import { artworkAdapter } from "@/lib/data-service";
 import { useAuthStore } from "@/store/auth";
 import { log } from "@/lib/log";
 import { IMAGE_STYLES } from "@/types/ai";
-import { Wand2, Upload, Save, Share2 } from "lucide-react";
+import { Wand2, Save, Share2 } from "lucide-react";
 
 interface CreatePanelProps {
   onClose?: () => void;
@@ -36,33 +36,23 @@ export const CreatePanel = ({ onClose }: CreatePanelProps) => {
   const { toast } = useToast();
 
   const handleGenerate = async () => {
-    if (!prompt.trim()) {
+    if (!prompt.trim() || !user) return;
+
+    const moderationResult = await aiClient.moderate({ text: prompt });
+    if (!moderationResult.ok) {
       toast({
         variant: "destructive",
-        title: "Prompt required",
-        description: "Please enter a prompt to generate an image.",
+        title: "Content blocked",
+        description: "Your prompt contains content that isn't allowed. Please try a different prompt.",
       });
       return;
     }
-
-    if (!user) return;
 
     setIsGenerating(true);
     setProgress(0);
     setResults([]);
 
     try {
-      // Check moderation first
-      const moderationResult = await aiClient.moderate({ text: prompt });
-      if (!moderationResult.ok) {
-        toast({
-          variant: "destructive",
-          title: "Content blocked",
-          description: "Your prompt contains content that isn't allowed. Please try a different prompt.",
-        });
-        return;
-      }
-
       // Simulate progress
       const progressInterval = setInterval(() => {
         setProgress(prev => Math.min(prev + 10, 90));
@@ -82,11 +72,7 @@ export const CreatePanel = ({ onClose }: CreatePanelProps) => {
       setProgress(100);
       setResults([result.url]);
       
-      log.info("Image generated successfully", { prompt: fullPrompt });
-      toast({
-        title: "Image generated!",
-        description: "Your AI-generated image is ready.",
-      });
+      toast({ title: "Image generated!", description: "Your AI-generated image is ready." });
     } catch (error) {
       log.error("Failed to generate image", { error: error.message });
       toast({
@@ -100,7 +86,7 @@ export const CreatePanel = ({ onClose }: CreatePanelProps) => {
     }
   };
 
-  const handleSaveDraft = async () => {
+  const saveArtwork = async (privacy: "public" | "private") => {
     if (!selectedResult || !user) return;
 
     try {
@@ -111,59 +97,22 @@ export const CreatePanel = ({ onClose }: CreatePanelProps) => {
         imageUrl: selectedResult,
         category: "digital",
         forSale: false,
-        privacy: "private",
-        meta: {
-          aiGenerated: true,
-          tags: selectedStyles,
-        },
+        privacy,
+        meta: { aiGenerated: true, tags: selectedStyles },
       });
 
       toast({
-        title: "Saved as draft",
-        description: "Your AI-generated artwork has been saved as a private draft.",
+        title: privacy === "public" ? "Published!" : "Saved as draft",
+        description: `Your AI-generated artwork is now ${privacy}.`,
       });
       
       onClose?.();
     } catch (error) {
-      log.error("Failed to save draft", { error: error.message });
+      log.error(`Failed to ${privacy === "public" ? "publish" : "save draft"}`, { error: error.message });
       toast({
         variant: "destructive",
-        title: "Save failed",
+        title: `${privacy === "public" ? "Publish" : "Save"} failed`,
         description: "Failed to save artwork. Please try again.",
-      });
-    }
-  };
-
-  const handlePublish = async () => {
-    if (!selectedResult || !user) return;
-
-    try {
-      await artworkAdapter.create({
-        userId: user.id,
-        title: `AI Generated: ${prompt.substring(0, 50)}...`,
-        description: `Generated with prompt: "${prompt}"`,
-        imageUrl: selectedResult,
-        category: "digital",
-        forSale: false,
-        privacy: "public",
-        meta: {
-          aiGenerated: true,
-          tags: selectedStyles,
-        },
-      });
-
-      toast({
-        title: "Published!",
-        description: "Your AI-generated artwork is now public.",
-      });
-      
-      onClose?.();
-    } catch (error) {
-      log.error("Failed to publish", { error: error.message });
-      toast({
-        variant: "destructive",
-        title: "Publish failed",
-        description: "Failed to publish artwork. Please try again.",
       });
     }
   };
@@ -186,18 +135,12 @@ export const CreatePanel = ({ onClose }: CreatePanelProps) => {
             onChange={(e) => setPrompt(e.target.value)}
             rows={3}
           />
-          <FieldHint>
-            Be specific about what you want. Avoid referencing living artists.
-          </FieldHint>
+          <FieldHint>Be specific about what you want. Avoid referencing living artists.</FieldHint>
         </div>
 
         <div className="space-y-2">
           <Label>Style</Label>
-          <ChipGroup
-            options={IMAGE_STYLES}
-            selected={selectedStyles}
-            onChange={setSelectedStyles}
-          />
+          <ChipGroup options={IMAGE_STYLES} selected={selectedStyles} onChange={setSelectedStyles} />
         </div>
 
         <div className="space-y-2">
@@ -223,31 +166,17 @@ export const CreatePanel = ({ onClose }: CreatePanelProps) => {
         {refImageUrl && (
           <div className="space-y-2">
             <Label>Strength: {strength[0]}</Label>
-            <Slider
-              value={strength}
-              onValueChange={setStrength}
-              min={0.1}
-              max={1}
-              step={0.1}
-            />
-            <FieldHint>
-              Lower values stay closer to the reference image
-            </FieldHint>
+            <Slider value={strength} onValueChange={setStrength} min={0.1} max={1} step={0.1} />
+            <FieldHint>Lower values stay closer to the reference image</FieldHint>
           </div>
         )}
 
-        <Button
-          onClick={handleGenerate}
-          disabled={isGenerating || !prompt.trim()}
-          className="w-full"
-        >
+        <Button onClick={handleGenerate} disabled={isGenerating || !prompt.trim()} className="w-full">
           <Wand2 className="h-4 w-4 mr-2" />
           {isGenerating ? "Generating..." : "Generate Image"}
         </Button>
 
-        {isGenerating && (
-          <ProgressBar value={progress} showText className="mt-4" />
-        )}
+        {isGenerating && <ProgressBar value={progress} showText className="mt-4" />}
 
         {results.length > 0 && (
           <div className="space-y-4">
@@ -264,20 +193,18 @@ export const CreatePanel = ({ onClose }: CreatePanelProps) => {
                     onClick={() => setSelectedResult(url)}
                     loading="lazy"
                   />
-                  <div className="text-xs text-muted-foreground">
-                    ⚡ AI-generated content
-                  </div>
+                  <div className="text-xs text-muted-foreground">⚡ AI-generated content</div>
                 </div>
               ))}
             </div>
 
             {selectedResult && (
               <div className="flex gap-2">
-                <Button variant="outline" onClick={handleSaveDraft} className="flex-1">
+                <Button variant="outline" onClick={() => saveArtwork("private")} className="flex-1">
                   <Save className="h-4 w-4 mr-2" />
                   Save Draft
                 </Button>
-                <Button onClick={handlePublish} className="flex-1">
+                <Button onClick={() => saveArtwork("public")} className="flex-1">
                   <Share2 className="h-4 w-4 mr-2" />
                   Publish
                 </Button>

@@ -11,7 +11,6 @@ import type {
   ModerateOutput,
   SimilarSearchInput,
   SimilarSearchResult,
-  AIJob,
 } from "@/types/ai";
 
 class AIClient {
@@ -66,26 +65,6 @@ class AIClient {
       return response;
     } catch (error) {
       log.error("Failed to search similar content", { error: error.message });
-      throw error;
-    }
-  }
-
-  streamJob(jobId: string): EventSource {
-    const eventSource = new EventSource(`/api/ai/jobs/${jobId}/stream`);
-    
-    eventSource.addEventListener("error", (event) => {
-      log.error("Job stream error", { jobId, event });
-    });
-
-    return eventSource;
-  }
-
-  async getJob(jobId: string): Promise<AIJob> {
-    try {
-      const response = await apiClient.get<AIJob>(`/ai/jobs/${jobId}`);
-      return response;
-    } catch (error) {
-      log.error("Failed to get job", { jobId, error: error.message });
       throw error;
     }
   }

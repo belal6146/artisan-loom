@@ -47,7 +47,6 @@ export const CoachDrawer = ({ children, artworkImageUrl }: CoachDrawerProps) => 
     setIsLoading(true);
 
     try {
-      // For now, we'll generate mock responses based on the question
       const response = await generateMockResponse(input.trim(), artworkImageUrl);
       
       const assistantMessage: ChatMessage = {
@@ -59,7 +58,6 @@ export const CoachDrawer = ({ children, artworkImageUrl }: CoachDrawerProps) => 
       };
 
       setMessages(prev => [...prev, assistantMessage]);
-      log.info("Coach response generated", { question: input.substring(0, 50) });
     } catch (error) {
       log.error("Failed to get coach response", { error: error.message });
       toast({
@@ -77,7 +75,6 @@ export const CoachDrawer = ({ children, artworkImageUrl }: CoachDrawerProps) => 
 
     setIsLoading(true);
     try {
-      // Create embedding for the artwork and provide analysis
       await aiClient.embed({ imageUrl: artworkImageUrl });
       
       const analysisMessage: ChatMessage = {
@@ -89,9 +86,7 @@ export const CoachDrawer = ({ children, artworkImageUrl }: CoachDrawerProps) => 
       };
 
       setMessages(prev => [...prev, analysisMessage]);
-      log.info("Artwork analyzed", { imageUrl: artworkImageUrl.substring(0, 50) });
     } catch (error) {
-      log.error("Failed to analyze artwork", { error: error.message });
       toast({
         variant: "destructive",
         title: "Analysis failed",
@@ -104,9 +99,7 @@ export const CoachDrawer = ({ children, artworkImageUrl }: CoachDrawerProps) => 
 
   return (
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
-      <SheetTrigger asChild>
-        {children}
-      </SheetTrigger>
+      <SheetTrigger asChild>{children}</SheetTrigger>
       <SheetContent side="right" className="w-full sm:w-[480px]">
         <SheetHeader>
           <SheetTitle className="flex items-center gap-2">
@@ -116,7 +109,7 @@ export const CoachDrawer = ({ children, artworkImageUrl }: CoachDrawerProps) => 
         </SheetHeader>
 
         <div className="flex flex-col h-full mt-6">
-          {messages.length === 0 && (
+          {messages.length === 0 ? (
             <div className="flex-1 flex items-center justify-center">
               <div className="text-center space-y-4">
                 <MessageCircle className="h-12 w-12 text-muted-foreground mx-auto" />
@@ -134,19 +127,12 @@ export const CoachDrawer = ({ children, artworkImageUrl }: CoachDrawerProps) => 
                 </div>
               </div>
             </div>
-          )}
-
-          {messages.length > 0 && (
+          ) : (
             <ScrollArea className="flex-1 -mx-6 px-6">
               <div className="space-y-4">
                 {messages.map((message) => (
-                  <div
-                    key={message.id}
-                    className={`flex ${message.type === "user" ? "justify-end" : "justify-start"}`}
-                  >
-                    <Card className={`max-w-[80%] ${
-                      message.type === "user" ? "bg-primary text-primary-foreground" : ""
-                    }`}>
+                  <div key={message.id} className={`flex ${message.type === "user" ? "justify-end" : "justify-start"}`}>
+                    <Card className={`max-w-[80%] ${message.type === "user" ? "bg-primary text-primary-foreground" : ""}`}>
                       <CardContent className="p-3">
                         <p className="text-sm whitespace-pre-wrap">{message.content}</p>
                         {message.citations && message.citations.length > 0 && (
@@ -187,11 +173,7 @@ export const CoachDrawer = ({ children, artworkImageUrl }: CoachDrawerProps) => 
               onKeyDown={(e) => e.key === "Enter" && handleSendMessage()}
               disabled={isLoading}
             />
-            <Button
-              onClick={handleSendMessage}
-              disabled={!input.trim() || isLoading}
-              size="icon"
-            >
+            <Button onClick={handleSendMessage} disabled={!input.trim() || isLoading} size="icon">
               <Send className="h-4 w-4" />
             </Button>
           </div>
@@ -201,40 +183,38 @@ export const CoachDrawer = ({ children, artworkImageUrl }: CoachDrawerProps) => 
   );
 };
 
-// Mock response generator for development
+// Mock response generator - inline implementation
 async function generateMockResponse(question: string, artworkImageUrl?: string): Promise<{
   content: string;
   citations: string[];
 }> {
-  // Simulate API delay
   await new Promise(resolve => setTimeout(resolve, 1000));
 
   const lowerQuestion = question.toLowerCase();
 
   if (lowerQuestion.includes("watercolor")) {
     return {
-      content: "Watercolor is a wonderful medium! Start with quality paper (140lb minimum) and practice wet-on-wet and wet-on-dry techniques. Begin with simple washes and gradually build layers. Remember that watercolor is transparent, so work light to dark. Key tips: use plenty of water, don't overwork the paint, and embrace happy accidents!",
+      content: "Watercolor is a wonderful medium! Start with quality paper (140lb minimum) and practice wet-on-wet and wet-on-dry techniques. Begin with simple washes and gradually build layers. Remember that watercolor is transparent, so work light to dark.",
       citations: ["Watercolor Techniques Manual", "Jean Haines Color Guide"],
     };
   }
 
   if (lowerQuestion.includes("composition")) {
     return {
-      content: "Great composition follows the rule of thirds, but don't be afraid to break it! Consider leading lines, balance, and focal points. Create visual hierarchy with contrast, color, and size. Study master paintings to see how they guide the viewer's eye through the piece.",
+      content: "Great composition follows the rule of thirds, but don't be afraid to break it! Consider leading lines, balance, and focal points. Create visual hierarchy with contrast, color, and size.",
       citations: ["Art Composition Handbook", "Visual Design Principles"],
     };
   }
 
   if (lowerQuestion.includes("color")) {
     return {
-      content: "Color theory is fundamental! Start with the color wheel: primary, secondary, and tertiary colors. Complementary colors create vibrant contrast, while analogous colors create harmony. Consider temperature (warm vs cool) and value (light vs dark). Practice mixing colors to understand how they interact.",
+      content: "Color theory is fundamental! Start with the color wheel: primary, secondary, and tertiary colors. Complementary colors create vibrant contrast, while analogous colors create harmony.",
       citations: ["Color Theory Fundamentals", "Mixing Paint Guide"],
     };
   }
 
-  // Default response
   return {
-    content: "That's a great question! Art is all about practice and experimentation. I'd recommend starting with the basics of your chosen medium and gradually building complexity. Don't be afraid to make mistakes - they're often where the best learning happens. What specific aspect would you like to explore further?",
+    content: "That's a great question! Art is all about practice and experimentation. I'd recommend starting with the basics of your chosen medium and gradually building complexity. What specific aspect would you like to explore further?",
     citations: ["Art Learning Guide", "Creative Process Manual"],
   };
 }
