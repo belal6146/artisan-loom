@@ -3,9 +3,12 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { DomainBadge } from "@/components/common/DomainBadge";
+import { StarRating } from "@/components/common/StarRating";
+import Img from "@/components/common/Img";
 import { formatRelativeTime, formatMoney } from "@/lib/date";
 import { useAuthStore } from "@/store/auth";
 import { dataService } from "@/lib/data-service";
+import { motion, focus, cardBase } from "@/lib/a11y";
 import type { Post, Artwork, Collaboration, Resource } from "@/schemas";
 import { 
   Heart, 
@@ -80,18 +83,17 @@ export const UnifiedCard = ({
         return (
           <div className="space-y-3">
             <p className="text-sm leading-relaxed">{post.content}</p>
-            {post.mediaUrl && (
-              <div className="rounded-lg overflow-hidden bg-muted">
-                {post.type === 'image' ? (
-                  <img
-                    src={post.mediaUrl}
-                    alt="Post media"
-                    className="w-full h-auto max-h-96 object-cover"
-                    loading="lazy"
-                    width={600}
-                    height={400}
-                  />
-                ) : post.type === 'video' ? (
+             {post.mediaUrl && (
+               <div className="rounded-xl overflow-hidden bg-muted">
+                 {post.type === 'image' ? (
+                   <Img
+                     src={post.mediaUrl}
+                     alt="Post media"
+                     className="w-full h-auto max-h-96 object-cover"
+                     width={600}
+                     height={400}
+                   />
+                 ) : post.type === 'video' ? (
                   <video
                     src={post.mediaUrl}
                     className="w-full h-auto max-h-96"
@@ -114,37 +116,39 @@ export const UnifiedCard = ({
       case 'artwork':
         const artwork = item as Artwork;
         return (
-          <div className="space-y-3">
-            <div className="rounded-lg overflow-hidden bg-muted">
-              <img
-                src={artwork.imageUrl}
-                alt={artwork.title}
-                className="w-full h-auto aspect-square object-cover"
-                loading="lazy"
-                width={400}
-                height={400}
-              />
-            </div>
-            <div>
-              <h3 className="font-semibold">{artwork.title}</h3>
-              {artwork.description && (
-                <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
-                  {artwork.description}
-                </p>
-              )}
-              <div className="flex items-center gap-2 mt-2">
-                <Badge variant="secondary" className="text-xs">
-                  {artwork.category}
-                </Badge>
-                {artwork.forSale && artwork.price && (
-                  <Badge className="text-xs">
-                    {formatMoney(artwork.price.amount, artwork.price.currency)}
-                  </Badge>
-                )}
-              </div>
-            </div>
-          </div>
-        );
+           <div className="space-y-3">
+             <div className="rounded-xl overflow-hidden bg-muted">
+               <Img
+                 src={artwork.imageUrl}
+                 alt={artwork.title}
+                 className="w-full h-auto aspect-square object-cover"
+                 width={400}
+                 height={400}
+               />
+             </div>
+             <div className="flex items-center gap-2">
+               <h3 className="font-semibold text-lg truncate flex-1">{artwork.title}</h3>
+               <DomainBadge url={artwork.imageUrl} verified={true} />
+             </div>
+             {artwork.description && (
+               <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
+                 {artwork.description}
+               </p>
+             )}
+             <div className="flex items-center justify-between gap-2 mt-2">
+               <div className="flex items-center gap-2">
+                 <Badge variant="secondary" className="text-xs">
+                   {artwork.category}
+                 </Badge>
+               </div>
+               {artwork.forSale && artwork.price && (
+                 <div className="font-medium">
+                   {formatMoney(artwork.price.amount, artwork.price.currency)}
+                 </div>
+               )}
+             </div>
+           </div>
+         );
 
       case 'collaboration':
         const collab = item as Collaboration;
@@ -331,7 +335,7 @@ export const UnifiedCard = ({
   };
 
   return (
-    <Card className={`hover:shadow-md transition-smooth ${className}`}>
+    <Card className={`${cardBase} ${motion.hover} ${className}`} data-testid="unified-card">
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-3">

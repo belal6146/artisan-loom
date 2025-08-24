@@ -120,11 +120,20 @@ export default function AIStyleExplorerTab() {
                 <SelectValue placeholder="Select style" />
               </SelectTrigger>
               <SelectContent className="bg-background border z-50">
-                {STYLE_OPTIONS.map((option) => (
-                  <SelectItem key={option.value} value={option.value}>
-                    {option.label}
-                  </SelectItem>
-                ))}
+                <SelectItem value="impressionism">Impressionism</SelectItem>
+                <SelectItem value="baroque">Baroque</SelectItem>
+                <SelectItem value="cubism">Cubism</SelectItem>
+                <SelectItem value="surrealism">Surrealism</SelectItem>
+                <SelectItem value="ukiyoe">Ukiyo-e</SelectItem>
+                <SelectItem value="bauhaus">Bauhaus</SelectItem>
+                <SelectItem value="madhubani">Madhubani</SelectItem>
+                <SelectItem value="persian">Persian miniatures</SelectItem>
+                <SelectItem value="watercolor">Watercolor wash</SelectItem>
+                <SelectItem value="pointillism">Pointillism</SelectItem>
+                <SelectItem value="linocut">Linocut</SelectItem>
+                <SelectItem value="woodblock">Woodblock</SelectItem>
+                <SelectItem value="pastel">Pastel</SelectItem>
+                <SelectItem value="acrylic">Acrylic impasto</SelectItem>
               </SelectContent>
             </Select>
           </div>

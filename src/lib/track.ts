@@ -1,61 +1,64 @@
 // Privacy-aware UX interaction tracking
 import { log } from "./log";
 
-type EventName =
-  | "page_view" | "tab_change" | "ai_generate" | "ai_publish_draft"
-  | "follow_toggle" | "like_toggle" | "comment_add"
-  | "buy_click" | "tool_visit" | "event_visit"
-  | "profile_view" | "artwork_view" | "search" | "sort_change"
-  | "dev_seed_completed";
-
-interface TrackingProps {
-  [key: string]: unknown;
-}
-
-// Simple consent check - assumes consent object exists in localStorage
-function getConsent() {
-  try {
-    const consent = localStorage.getItem("consent");
-    return consent ? JSON.parse(consent) : null;
-  } catch {
-    return null;
-  }
-}
-
-export function track(name: EventName, props: TrackingProps = {}) {
-  // Check consent and Global Privacy Control
-  const consent = getConsent();
-  const gpc = (navigator as any).globalPrivacyControl === true;
+export function track(event: string, props: Record<string, unknown> = {}) {
+  // Check consent and GPC
+  const hasConsent = getAnalyticsConsent();
+  const gpcDenied = (navigator as any)?.globalPrivacyControl === true;
   
-  if (!consent?.analytics || gpc) {
-    return; // No tracking without consent or if GPC enabled
+  if (!hasConsent || gpcDenied) return;
+  
+  // Sample to 30% to avoid overwhelming
+  if (Math.random() > 0.3) return;
+  
+  // Log the event
+  log.info("user_action", { event, ...props });
+  
+  // In dev, also console.log for debugging
+  if (import.meta.env.DEV) {
+    console.log(`🔍 Track: ${event}`, props);
   }
-
-  // Keep payload minimal and anonymous
-  const payload = {
-    event: name,
-    timestamp: Date.now(),
-    url: window.location.pathname,
-    ...props
-  };
-
-  // For now, log at info level (can be extended to send to analytics service)
-  log.info("User interaction", { tracking: payload });
-
-  // Future: send to analytics endpoint
-  // fetch("/api/analytics", {
-  //   method: "POST",
-  //   headers: { "content-type": "application/json" },
-  //   body: JSON.stringify(payload)
-  // }).catch(() => {});
 }
+
+function getAnalyticsConsent(): boolean {
+  if (typeof window === 'undefined') return false;
+  
+  try {
+    const consent = localStorage.getItem('consent');
+    const consentData = consent ? JSON.parse(consent) : null;
+    return consentData?.analytics === true;
+  } catch {
+    return false;
+  }
+}
+
+// Common tracking helpers
+export const trackAction = {
+  like: (contentId: string, contentType: string) => 
+    track('content_like', { contentId, contentType }),
+  
+  follow: (targetUserId: string) => 
+    track('user_follow', { targetUserId }),
+  
+  purchase: (artworkId: string, amount: number, currency: string) => 
+    track('artwork_purchase', { artworkId, amount, currency }),
+  
+  generate: (provider: string, style: string, promptLength: number) => 
+    track('ai_generate', { provider, style, promptLength }),
+  
+  view: (contentId: string, contentType: string) => 
+    track('content_view', { contentId, contentType }),
+  
+  search: (query: string, resultCount: number) => 
+    track('search', { query: query.slice(0, 100), resultCount }),
+};
 
 // Helper for page views
-export function trackPageView(path: string, props?: TrackingProps) {
-  track("page_view", { path, ...props });
+export function trackPageView(path: string, props?: Record<string, unknown>) {
+  track('page_view', { path, ...props });
 }
 
 // Helper for tab changes
 export function trackTabChange(tab: string, context?: string) {
-  track("tab_change", { tab, context });
+  track('tab_change', { tab, context });
 }

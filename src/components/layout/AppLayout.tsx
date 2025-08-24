@@ -11,12 +11,10 @@ interface AppLayoutProps {
 
 export const AppLayout = ({ children, showFooter = true }: AppLayoutProps) => {
   return (
-    <div className="min-h-dvh bg-app">
+    <div className="min-h-dvh bg-brand-radial bg-noise/20">
       <Header />
-      <main className="container mx-auto max-w-7xl">
-        <div className="grid gap-6 md:gap-8 xl:grid-cols-12">
-          {children}
-        </div>
+      <main className="mx-auto w-full max-w-[1200px] px-4 md:px-6 lg:px-8 py-6">
+        {children}
       </main>
       {showFooter && <Footer />}
       <Toaster />

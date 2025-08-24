@@ -22,6 +22,10 @@ export default {
 		},
 		extend: {
 			colors: {
+				brand: { 
+					DEFAULT: 'hsl(220 83% 53%)', 
+					foreground: 'hsl(210 20% 98%)' 
+				},
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',
 				ring: 'hsl(var(--ring))',
@@ -66,11 +70,17 @@ export default {
 				'2xl': '1.25rem'
 			},
 			spacing: {
+				'4': '1rem',
+				'6': '1.5rem', 
+				'8': '2rem',
+				'12': '3rem',
+				'16': '4rem',
 				'18': '4.5rem',
 				'88': '22rem',
 				'128': '32rem'
 			},
 			boxShadow: {
+				brand: '0 8px 24px hsl(220 50% 10% / 0.08)',
 				card: "0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04)",
 				cardHover: "0 8px 20px rgba(0,0,0,.08)",
 				'subtle': 'var(--shadow-subtle)',
@@ -79,6 +89,8 @@ export default {
 				'premium': 'var(--shadow-premium)'
 			},
 			backgroundImage: {
+				'brand-radial': 'radial-gradient(1200px 600px at 10% -10%, hsl(220 90% 60% / .20), transparent)',
+				'noise': 'url(/noise.png)',
 				'gradient-brand': 'var(--gradient-brand)',
 				'gradient-subtle': 'var(--gradient-subtle)'
 			},

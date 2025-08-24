@@ -64,17 +64,17 @@ export async function ensureDemoData() {
     if (i % 2 === 0) await dataService.followUser(users[i].id, users[0].id).catch(() => {});
   }
 
-  // Create artworks + posts for each user (more content)
+  // Create more artworks + posts for each user (enhanced content)
   for (const u of users) {
-    // Create 2-3 artworks per user
-    for (let i = 0; i < 3; i++) {
+    // Create 3-4 artworks per user with stable image URLs
+    for (let i = 0; i < 4; i++) {
       const categories = ["painting", "sculpture", "digital", "photography"] as const;
-      const category = categories[Math.floor(Math.random() * categories.length)];
+      const category = categories[i % categories.length];
       
       await artworkAdapter.create({
         userId: u.id,
         title: `${category === "painting" ? "Landscape" : category === "sculpture" ? "Form Study" : category === "digital" ? "Abstract Vision" : "Portrait"} ${i + 1} by ${u.name}`,
-        description: `A beautiful ${category} exploring light and form`,
+        description: `A beautiful ${category} exploring light, form and artistic expression`,
         imageUrl: `https://picsum.photos/seed/${u.id}-a${i}/800/600`,
         category,
         forSale: Math.random() > 0.3,
@@ -83,13 +83,13 @@ export async function ensureDemoData() {
         location: "Remote",
         meta: { 
           tags: ["art", category, "original"], 
-          colors: ["blue", "green", "red", "yellow"][Math.floor(Math.random() * 4)], 
+          colors: ["blue", "green", "red", "yellow", "purple"][Math.floor(Math.random() * 5)], 
           aiGenerated: Math.random() > 0.8 
         }
       });
     }
 
-    // Create 3-5 posts per user
+    // Create 4-5 posts per user
     for (let i = 0; i < 5; i++) {
       const types = ["image", "text", "video"] as const;
       const type = types[Math.floor(Math.random() * types.length)];
@@ -101,8 +101,9 @@ export async function ensureDemoData() {
           "Working on something new 🎨",
           "Love how this turned out!",
           "Experimenting with colors today",
-          "Inspired by nature",
-          "Process video of my latest piece"
+          "Inspired by nature's beauty",
+          "Process video of my latest piece",
+          "Trying a new technique"
         ][i],
         mediaUrl: type !== "text" ? `https://picsum.photos/seed/${u.id}-p${i}/1200/800` : undefined
       });

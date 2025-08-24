@@ -11,6 +11,7 @@ import AIStyleExplorerTab from "@/features/profile/AIStyleExplorerTab";
 import { useAuthStore } from "@/store/auth";
 import { userAdapter, artworkAdapter } from "@/lib/data-service";
 import { log } from "@/lib/log";
+import { focus } from "@/lib/a11y";
 import type { User, Artwork } from "@/types";
 
 // Simple placeholder components for tabs until we create them properly
@@ -153,45 +154,56 @@ export default function Profile() {
 
   return (
     <AppLayout>
-      <div className="xl:col-span-12 py-8 space-y-8">
-        <div className="grid md:grid-cols-[200px,1fr] gap-6 items-start">
-          <div className="flex flex-col items-center md:items-start space-y-4">
+      <div className="space-y-8">
+        {/* Profile Header with Cover */}
+        <section className="relative">
+          <div className="w-full h-48 md:h-56 bg-gradient-to-r from-primary/10 to-accent/10 rounded-2xl"></div>
+          <div className="flex gap-4 items-end -mt-10 px-2">
             <img 
               src={user.avatar || '/placeholder.svg'} 
-              alt={user.name}
-              width={128}
-              height={128}
+              alt={`${user.name} avatar`}
+              width={112}
+              height={112}
               loading="lazy"
               decoding="async"
-              className="size-32 rounded-2xl object-cover shadow-lg ring-1 ring-border/50"
+              className="size-28 rounded-2xl ring-4 ring-background shadow-brand object-cover"
             />
-            {isOwner && (
-              <Button variant="outline" size="sm" className="focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2">
-                Edit Profile
-              </Button>
-            )}
-          </div>
-          
-          <div className="space-y-4">
-            <div>
-              <h1 className="text-4xl font-semibold tracking-tight">{user.name}</h1>
-              <p className="text-muted-foreground">@{user.username}</p>
+            <div className="flex-1">
+              <h1 className="text-3xl font-bold tracking-tight">{user.name}</h1>
+              <p className="text-muted-foreground text-lg">@{user.username}</p>
               {user.location && (
                 <p className="text-sm text-muted-foreground mt-1">{user.location}</p>
               )}
             </div>
-            
-            <div className="flex gap-6 text-sm">
-              <span><strong>{filteredArtworks.length}</strong> Artworks</span>
-              <span><strong>{user.followers?.length || 0}</strong> Followers</span>
-              <span><strong>{user.following?.length || 0}</strong> Following</span>
+            <div className="flex gap-2">
+              {isOwner ? (
+                <Button variant="outline" size="sm" className={focus}>
+                  Edit Profile
+                </Button>
+              ) : (
+                <>
+                  <Button size="sm" className={focus}>
+                    Follow
+                  </Button>
+                  <Button variant="outline" size="sm" className={focus}>
+                    Message
+                  </Button>
+                </>
+              )}
             </div>
-            
-            {user.bio && (
-              <p className="text-muted-foreground prose prose-neutral max-w-none">{user.bio}</p>
-            )}
           </div>
-        </div>
+          
+          {/* Stats */}
+          <div className="flex gap-6 text-sm mt-4 px-2">
+            <span><strong>{filteredArtworks.length}</strong> Artworks</span>
+            <span><strong>{user.followers?.length || 0}</strong> Followers</span>
+            <span><strong>{user.following?.length || 0}</strong> Following</span>
+          </div>
+          
+          {user.bio && (
+            <p className="text-muted-foreground mt-4 px-2 max-w-2xl">{user.bio}</p>
+          )}
+        </section>
         
         <ProfileTabs
           activeTab={activeTab}
