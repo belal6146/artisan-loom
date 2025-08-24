@@ -9,7 +9,7 @@ import { TrendList } from "./components/TrendList";
 import { Timeline } from "./components/Timeline";
 import { insightsClient } from "@/lib/insightsClient";
 import { formatMoney } from "@/lib/date";
-import type { ProfileInsights, Period } from "@/types";
+import type { ProfileInsights, Period } from "@/schemas";
 import { 
   Download, 
   TrendingUp, 
@@ -36,11 +36,11 @@ export const InsightsTab = ({ userId, isOwnProfile, className }: InsightsTabProp
       setIsLoading(true);
       try {
         const data = await insightsClient.getInsights({ userId, period });
-        if (data) {
-          setInsights(data);
-        }
+        // Type assertion since we know the client returns valid ProfileInsights
+        setInsights(data as ProfileInsights);
       } catch (error) {
         console.error("Failed to load insights:", error);
+        setInsights(null);
       } finally {
         setIsLoading(false);
       }
@@ -230,7 +230,14 @@ export const InsightsTab = ({ userId, isOwnProfile, className }: InsightsTabProp
 
           <Timeline
             title="Purchase History"
-            items={insights.buyer.timeline.slice(0, 10)}
+            items={insights.buyer.timeline.slice(0, 10).map(item => ({
+              purchasedAt: item.purchasedAt,
+              artworkId: item.artworkId,
+              price: {
+                amount: item.price.amount,
+                currency: item.price.currency
+              }
+            }))}
           />
         </div>
       )}
