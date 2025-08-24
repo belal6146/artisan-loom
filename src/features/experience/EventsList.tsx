@@ -5,6 +5,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge";
 import { DomainBadge } from "@/components/common/DomainBadge";
 import { InlineSkeleton } from "@/components/common/InlineSkeleton";
+import { track } from "@/lib/track";
 import { useEvents } from "./useEvents";
 import { Calendar, MapPin, ExternalLink } from "lucide-react";
 
@@ -20,14 +21,18 @@ const categories = [
 
 export const EventsList = () => {
   const [selectedCategory, setSelectedCategory] = useState('All');
-  const [selectedLocation, setSelectedLocation] = useState('');
+  const [selectedLocation, setSelectedLocation] = useState<string>("all");
 
   const { data: events, isLoading, error } = useEvents({
     filters: {
       category: selectedCategory !== 'All' ? selectedCategory : undefined,
-      location: selectedLocation || undefined
+      location: selectedLocation !== 'all' ? selectedLocation : undefined
     }
   });
+
+  const handleEventVisit = (eventId: string, url: string) => {
+    track("event_visit", { id: eventId, domain: new URL(url).hostname });
+  };
 
   if (isLoading) {
     return <InlineSkeleton count={6} />;
@@ -73,7 +78,7 @@ export const EventsList = () => {
                 <SelectValue placeholder="Location" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All locations</SelectItem>
+                <SelectItem value="all">All locations</SelectItem>
                 <SelectItem value="New York">New York</SelectItem>
                 <SelectItem value="Los Angeles">Los Angeles</SelectItem>
                 <SelectItem value="London">London</SelectItem>
@@ -144,6 +149,7 @@ export const EventsList = () => {
                         target="_blank"
                         rel="noopener noreferrer"
                         className="flex items-center gap-2"
+                        onClick={() => handleEventVisit(event.id, event.url)}
                       >
                         <ExternalLink className="h-4 w-4" />
                         Visit site

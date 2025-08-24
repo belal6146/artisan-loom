@@ -15,7 +15,7 @@ const PROVIDERS: AIProvider[] = ["gemini", "openai", "deepseek", "local"];
 
 export default function AIStyleExplorerTab() {
   const [provider, setProvider] = useState<AIProvider>("gemini");
-  const [style, setStyle] = useState<string>("");
+  const [style, setStyle] = useState<string | undefined>(undefined);
   const [prompt, setPrompt] = useState("");
   const [negative, setNegative] = useState("");
   const [strength, setStrength] = useState([0.65]);
@@ -98,11 +98,11 @@ export default function AIStyleExplorerTab() {
 
           <div className="space-y-2">
             <Label htmlFor="style">Art Style</Label>
-            <Select value={style || undefined} onValueChange={setStyle}>
-              <SelectTrigger>
-                <SelectValue placeholder="Choose an art style" />
+            <Select value={style} onValueChange={setStyle}>
+              <SelectTrigger aria-label="Choose an art style">
+                <SelectValue placeholder="Select style" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="bg-background border z-50">
                 {IMAGE_STYLES.map((s) => (
                   <SelectItem key={s} value={s}>
                     {s}

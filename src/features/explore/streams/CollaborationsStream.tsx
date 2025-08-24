@@ -56,14 +56,14 @@ export const CollaborationsStream = ({ sort, pager, onItemAction, className }: C
           value={filters.compensationType || ""}
           onValueChange={(value) => setFilters(prev => ({ 
             ...prev, 
-            compensationType: value || undefined 
+            compensationType: value === "all" ? undefined : value 
           }))}
         >
           <SelectTrigger className="w-48">
             <SelectValue placeholder="Compensation type" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">All types</SelectItem>
+            <SelectItem value="all">All types</SelectItem>
             <SelectItem value="paid">Paid</SelectItem>
             <SelectItem value="unpaid">Unpaid</SelectItem>
             <SelectItem value="revenue-share">Revenue Share</SelectItem>

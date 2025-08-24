@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { storage } from "@/lib/storage";
+import { track, trackTabChange } from "@/lib/track";
 import type { ExploreTab, Sort } from "@/lib/filters";
 import { ArrowUpDown, Clock } from "lucide-react";
 
@@ -46,11 +47,15 @@ export const ExploreTabs = ({
   }, [activeTab]);
 
   const handleTabChange = (newTab: string) => {
-    onTabChange(newTab as ExploreTab);
+    const tab = newTab as ExploreTab;
+    trackTabChange(tab, "explore");
+    onTabChange(tab);
   };
 
   const toggleSort = () => {
-    onSortChange(sort === "rank" ? "latest" : "rank");
+    const newSort = sort === "rank" ? "latest" : "rank";
+    track("sort_change", { from: sort, to: newSort, context: "explore" });
+    onSortChange(newSort);
   };
 
   return (

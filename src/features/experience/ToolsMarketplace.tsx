@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { DomainBadge } from "@/components/common/DomainBadge";
 import { StarRating } from "@/components/common/StarRating";
 import { InlineSkeleton } from "@/components/common/InlineSkeleton";
+import { track } from "@/lib/track";
 import { useTools } from "./useTools";
 import { formatMoney } from "@/lib/date";
 import { ShoppingCart, ExternalLink } from "lucide-react";
@@ -39,6 +40,10 @@ export const ToolsMarketplace = () => {
       minRating
     }
   });
+
+  const handleToolVisit = (toolId: string, url: string, vendorName: string) => {
+    track("tool_visit", { id: toolId, vendor: vendorName, domain: new URL(url).hostname });
+  };
 
   if (isLoading) {
     return <InlineSkeleton count={6} />;
@@ -96,14 +101,14 @@ export const ToolsMarketplace = () => {
             </Select>
 
             <Select 
-              value={minRating?.toString() || ""} 
-              onValueChange={(value) => setMinRating(value ? parseFloat(value) : undefined)}
+              value={minRating?.toString() || "any"} 
+              onValueChange={(value) => setMinRating(value === "any" ? undefined : parseFloat(value))}
             >
               <SelectTrigger className="w-48">
                 <SelectValue placeholder="Min rating" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Any rating</SelectItem>
+                <SelectItem value="any">Any rating</SelectItem>
                 <SelectItem value="4">4+ stars</SelectItem>
                 <SelectItem value="4.5">4.5+ stars</SelectItem>
               </SelectContent>
@@ -192,17 +197,18 @@ export const ToolsMarketplace = () => {
                       <DomainBadge url={tool.url} verified={tool.vendor?.verified} />
                     </div>
                     
-                    <Button size="sm" asChild>
-                      <a
-                        href={tool.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center gap-2"
-                      >
-                        <ExternalLink className="h-4 w-4" />
-                        Shop
-                      </a>
-                    </Button>
+                        <Button size="sm" asChild>
+                          <a
+                            href={tool.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center gap-2"
+                            onClick={() => handleToolVisit(tool.id, tool.url, tool.vendor?.name || 'Unknown')}
+                          >
+                            <ExternalLink className="h-4 w-4" />
+                            Shop
+                          </a>
+                        </Button>
                   </div>
                 </div>
               </CardContent>

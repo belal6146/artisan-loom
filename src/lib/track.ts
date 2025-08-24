@@ -5,7 +5,7 @@ type EventName =
   | "page_view" | "tab_change" | "ai_generate" | "ai_publish_draft"
   | "follow_toggle" | "like_toggle" | "comment_add"
   | "buy_click" | "tool_visit" | "event_visit"
-  | "profile_view" | "artwork_view" | "search";
+  | "profile_view" | "artwork_view" | "search" | "sort_change";
 
 interface TrackingProps {
   [key: string]: unknown;

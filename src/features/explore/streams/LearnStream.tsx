@@ -60,14 +60,14 @@ export const LearnStream = ({ sort, pager, onItemAction, className }: LearnStrea
             value={filters.type || ""}
             onValueChange={(value) => setFilters(prev => ({ 
               ...prev, 
-              type: value as any || undefined 
+              type: value === "all" ? undefined : value as any 
             }))}
           >
             <SelectTrigger className="w-32">
               <SelectValue placeholder="Type" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">All</SelectItem>
+              <SelectItem value="all">All</SelectItem>
               <SelectItem value="video">Video</SelectItem>
               <SelectItem value="image">Image</SelectItem>
               <SelectItem value="pdf">PDF</SelectItem>
@@ -75,17 +75,17 @@ export const LearnStream = ({ sort, pager, onItemAction, className }: LearnStrea
           </Select>
 
           <Select
-            value={filters.difficulty || ""}
+            value={filters.difficulty || "all"}
             onValueChange={(value) => setFilters(prev => ({ 
               ...prev, 
-              difficulty: value as any || undefined 
+              difficulty: value === "all" ? undefined : value as any 
             }))}
           >
             <SelectTrigger className="w-40">
               <SelectValue placeholder="Difficulty" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">All levels</SelectItem>
+              <SelectItem value="all">All levels</SelectItem>
               <SelectItem value="beginner">Beginner</SelectItem>
               <SelectItem value="intermediate">Intermediate</SelectItem>
               <SelectItem value="advanced">Advanced</SelectItem>
