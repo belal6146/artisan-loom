@@ -3,6 +3,11 @@
 
 export type ID = string;
 export type ISO = string;
+export type EventType = "gallery" | "competition" | "meetup" | "class" | "seminar" | "volunteer";
+export type MediaCategory = 
+  | "painting" | "drawing" | "printmaking" | "sculpture" | "ceramics"
+  | "textiles" | "photography" | "electronic" | "installation" | "glass" | "literature" | "sound" | "other";
+export type Rating = 1 | 2 | 3 | 4 | 5;
 
 export interface Money {
   amount: number;
@@ -99,12 +104,58 @@ export interface Collaboration {
 export interface Event {
   id: ID;
   title: string;
-  type: "gallery" | "competition" | "meetup" | "class" | "seminar" | "volunteer";
+  type: EventType;
   startsAt: ISO;
   endsAt: ISO;
   location: string;
   url?: string;
+  venue?: string;
+  lat?: number;
+  lng?: number;
+  source?: string;
+  verified?: boolean;
+  verdict?: "ok" | "suspicious" | "blocked";
   description?: string;
+  imageUrl?: string;
+  attendees?: number;
+  maxAttendees?: number;
+}
+
+// Marketplace types
+export interface ToolVendor {
+  id: ID;
+  name: string;
+  domain: string;
+  country?: string;
+  logo?: string;
+  categories: MediaCategory[];
+  verified: true;
+  ratingAvg: number;
+  ratingCount: number;
+}
+
+export interface ToolProduct {
+  id: ID;
+  vendorId: ID;
+  name: string;
+  imageUrl?: string;
+  url: string;
+  category: MediaCategory;
+  subcategory?: string;
+  price: Money;
+  availability: "in-stock" | "out-of-stock" | "preorder";
+  ratingAvg: number;
+  ratingCount: number;
+  specs?: Record<string, string>;
+}
+
+export interface Review {
+  id: ID;
+  targetType: "product" | "vendor";
+  targetId: ID;
+  authorId: ID;
+  rating: Rating;
+  text?: string;
   createdAt: ISO;
 }
 

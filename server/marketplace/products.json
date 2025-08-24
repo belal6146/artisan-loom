@@ -1,0 +1,92 @@
+[
+  {
+    "id": "prd-001",
+    "vendorId": "jacksons",
+    "name": "Jackson's Professional Watercolours Set",
+    "imageUrl": "https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?w=400&h=400&fit=crop",
+    "url": "https://www.jacksonsart.com/watercolours-set",
+    "category": "painting",
+    "subcategory": "watercolor",
+    "price": {"amount": 4999, "currency": "GBP"},
+    "availability": "in-stock",
+    "ratingAvg": 4.7,
+    "ratingCount": 182,
+    "specs": {
+      "colors": "24",
+      "tube_size": "14ml",
+      "lightfastness": "excellent"
+    }
+  },
+  {
+    "id": "prd-002", 
+    "vendorId": "cassart",
+    "name": "Cass Art Canvas 3-Pack",
+    "imageUrl": "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=400&fit=crop",
+    "url": "https://www.cassart.co.uk/canvas-3-pack",
+    "category": "painting",
+    "subcategory": "canvas",
+    "price": {"amount": 1999, "currency": "GBP"},
+    "availability": "in-stock",
+    "ratingAvg": 4.3,
+    "ratingCount": 86,
+    "specs": {
+      "size": "16x20 inches",
+      "material": "100% cotton",
+      "primed": "yes"
+    }
+  },
+  {
+    "id": "prd-003",
+    "vendorId": "blick",
+    "name": "Blick Studio Brushes Professional Set",
+    "imageUrl": "https://images.unsplash.com/photo-1541961017774-22349e4a1262?w=400&h=400&fit=crop",
+    "url": "https://www.dickblick.com/brushes-professional-set",
+    "category": "painting",
+    "subcategory": "brushes",
+    "price": {"amount": 8999, "currency": "USD"},
+    "availability": "in-stock",
+    "ratingAvg": 4.8,
+    "ratingCount": 347,
+    "specs": {
+      "brushes": "12",
+      "hair_type": "natural bristle",
+      "sizes": "2-24"
+    }
+  },
+  {
+    "id": "prd-004",
+    "vendorId": "jerrysartarama", 
+    "name": "Jerry's Sculpture Clay 25lb",
+    "imageUrl": "https://images.unsplash.com/photo-1578321272176-b7bbc0679853?w=400&h=400&fit=crop",
+    "url": "https://www.jerrysartarama.com/sculpture-clay-25lb",
+    "category": "ceramics",
+    "subcategory": "clay",
+    "price": {"amount": 2999, "currency": "USD"},
+    "availability": "in-stock",
+    "ratingAvg": 4.5,
+    "ratingCount": 124,
+    "specs": {
+      "weight": "25 lbs",
+      "type": "earthenware",
+      "cone": "04-06"
+    }
+  },
+  {
+    "id": "prd-005",
+    "vendorId": "artbeads",
+    "name": "Premium Beading Wire Set",
+    "imageUrl": "https://images.unsplash.com/photo-1581833971358-2c8b550f87b3?w=400&h=400&fit=crop",
+    "url": "https://www.artbeads.com/beading-wire-set",
+    "category": "textiles",
+    "subcategory": "wire",
+    "price": {"amount": 3499, "currency": "USD"},
+    "availability": "in-stock", 
+    "ratingAvg": 4.6,
+    "ratingCount": 298,
+    "specs": {
+      "gauges": "18-26 AWG",
+      "material": "silver-plated copper",
+      "length": "10 meters each"
+    }
+  }
+]

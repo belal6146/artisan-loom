@@ -73,7 +73,6 @@ export const mockEvent: Event = {
   endsAt: "2024-06-01T18:00:00Z",
   location: "Test Gallery",
   description: "Test event description",
-  createdAt: "2024-01-01T00:00:00Z",
 };
 
 export const mockPurchase: Purchase = {
