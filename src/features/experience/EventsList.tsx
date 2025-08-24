@@ -52,7 +52,7 @@ export const EventsList = () => {
   const filteredEvents = events || [];
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6" data-testid="events-list">
       {/* Filters */}
       <Card>
         <CardHeader>

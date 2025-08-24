@@ -36,6 +36,36 @@ export const useEvents = ({ filters }: UseEventsProps = {}) => {
       try {
         log.info("Events API request", { requestId, filters });
         
+        // For development, return mock data immediately since /api/events doesn't exist
+        if (import.meta.env.DEV) {
+          const duration = Date.now() - startTime;
+          log.info("Events API success (mock)", { requestId, duration, count: 2 });
+          
+          return [
+            {
+              id: 'mock-1',
+              title: 'Contemporary Art Exhibition',
+              description: 'Explore the latest in contemporary art from emerging artists.',
+              category: 'Gallery',
+              location: 'Modern Art Museum, NYC',
+              date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+              url: 'https://example-gallery.com/exhibition',
+              verified: true,
+              imageUrl: '/placeholder.svg'
+            },
+            {
+              id: 'mock-2',
+              title: 'Digital Art Workshop',
+              description: 'Learn digital painting techniques with industry professionals.',
+              category: 'Workshop',
+              location: 'Art Center, San Francisco',
+              date: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString(),
+              url: 'https://example-workshops.com/digital-art',
+              verified: true
+            }
+          ];
+        }
+        
         const url = new URL('/api/events', window.location.origin);
         if (filters) {
           Object.entries(filters).forEach(([key, value]) => {

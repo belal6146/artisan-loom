@@ -171,7 +171,7 @@ export default function AIStyleExplorerTab() {
 
         <Card className="p-6 flex items-center justify-center min-h-[400px]">
           {generatedImage ? (
-            <div className="w-full space-y-4">
+            <div className="w-full space-y-4" data-testid="ai-result">
               <img
                 src={generatedImage}
                 alt="AI generated artwork"

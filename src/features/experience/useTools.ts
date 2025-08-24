@@ -52,6 +52,60 @@ export const useTools = ({ filters }: UseToolsProps = {}) => {
       try {
         log.info("Tools API request", { requestId, filters });
         
+        // For development, return mock data immediately since /api/tools doesn't exist
+        if (import.meta.env.DEV) {
+          const duration = Date.now() - startTime;
+          log.info("Tools API success (mock)", { requestId, duration, count: 2 });
+          
+          return [
+            {
+              id: 'mock-tool-1',
+              vendorId: 'vendor-1',
+              vendor: {
+                id: 'vendor-1',
+                name: 'Art Supply Co',
+                domain: 'artsupply.example',
+                verified: true,
+                rating: 4.8,
+                reviewsCount: 1247
+              },
+              title: 'Professional Watercolor Set',
+              description: 'High-quality watercolor paints perfect for professional artists.',
+              category: 'Paint',
+              imageUrl: '/placeholder.svg',
+              price: {
+                amount: 89.99,
+                currency: 'USD'
+              },
+              rating: 4.7,
+              reviewsCount: 324,
+              url: 'https://artsupply.example/watercolor-set'
+            },
+            {
+              id: 'mock-tool-2',
+              vendorId: 'vendor-2',
+              vendor: {
+                id: 'vendor-2',
+                name: 'Canvas World',
+                domain: 'canvasworld.example',
+                verified: true,
+                rating: 4.6,
+                reviewsCount: 892
+              },
+              title: 'Premium Canvas Boards',
+              description: 'Acid-free canvas boards suitable for all painting mediums.',
+              category: 'Canvas',
+              price: {
+                amount: 24.99,
+                currency: 'USD'
+              },
+              rating: 4.5,
+              reviewsCount: 156,
+              url: 'https://canvasworld.example/canvas-boards'
+            }
+          ];
+        }
+        
         const url = new URL('/api/tools', window.location.origin);
         if (filters) {
           Object.entries(filters).forEach(([key, value]) => {

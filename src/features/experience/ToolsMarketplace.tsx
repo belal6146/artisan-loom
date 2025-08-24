@@ -63,7 +63,7 @@ export const ToolsMarketplace = () => {
   const filteredTools = tools || [];
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6" data-testid="tools-list">
       {/* Filters */}
       <Card>
         <CardHeader>
