@@ -36,8 +36,7 @@ export const InsightsTab = ({ userId, isOwnProfile, className }: InsightsTabProp
       setIsLoading(true);
       try {
         const data = await insightsClient.getInsights({ userId, period });
-        // Type assertion since we know the client returns valid ProfileInsights
-        setInsights(data as ProfileInsights);
+        setInsights(data);
       } catch (error) {
         console.error("Failed to load insights:", error);
         setInsights(null);

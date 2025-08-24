@@ -60,7 +60,7 @@ class InsightsClient {
       },
     };
     
-    return ProfileInsightsSchema.parse(mockInsights);
+    return mockInsights;
   }
 
   private getCreatorStatsByPeriod(period: Period, metric: string): number {
