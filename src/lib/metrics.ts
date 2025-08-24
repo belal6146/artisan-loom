@@ -48,4 +48,8 @@ export const METRICS = {
   DSAR_EXPORT: 'dsar_export',
   AUTH_SUCCESS: 'auth_success',
   AUTH_FAILURE: 'auth_failure',
+  PAYMENTS_CHECKOUT_ARTWORK_CREATED: 'payments_checkout_artwork_created',
+  PAYMENTS_CHECKOUT_SUBSCRIPTION_CREATED: 'payments_checkout_subscription_created',
+  PAYMENTS_WEBHOOK_COMPLETED: 'payments_webhook_completed',
+  PAYMENTS_WEBHOOK_FAILED: 'payments_webhook_failed',
 } as const;

@@ -18,6 +18,7 @@ const AdminDebug = () => {
     database: "healthy",
     auth: "healthy", 
     storage: "healthy",
+    stripe: "configured", // Would check for STRIPE_SECRET_KEY
   };
 
   const handleHealthCheck = async () => {

@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Search, Filter } from "lucide-react";
+import { BuyButton } from "@/components/payments/BuyButton";
 
 // Mock data for demonstration
 const mockArtworks = [
@@ -135,8 +136,15 @@ export default function Explore() {
                         )}
                       </div>
                       
-                      {artwork.forSale && (
-                        <Button className="w-full" size="sm">
+                      {artwork.forSale && artwork.price ? (
+                        <BuyButton 
+                          artworkId={artwork.id}
+                          forSale={artwork.forSale}
+                          price={artwork.price}
+                          className="w-full"
+                        />
+                      ) : (
+                        <Button className="w-full" size="sm" variant="outline">
                           View Details
                         </Button>
                       )}
