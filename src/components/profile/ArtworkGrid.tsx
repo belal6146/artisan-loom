@@ -51,7 +51,7 @@ export const ArtworkGrid = ({ artworks, isOwnProfile, onArtworkUpdate }: Artwork
     setUpdatingArtwork(artwork.id);
     try {
       const newForSale = !artwork.forSale;
-      const updateData: any = { forSale: newForSale };
+      const updateData: { forSale: boolean; price?: undefined } = { forSale: newForSale };
       
       // If setting to not for sale, remove price
       if (!newForSale) {

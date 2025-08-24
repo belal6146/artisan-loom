@@ -24,18 +24,18 @@ describe('GDPR Consent & GPC Tests', () => {
     // Reset cookies
     document.cookie = '';
     // Reset GPC signal
-    (window.navigator as any).globalPrivacyControl = false;
+    (window.navigator as { globalPrivacyControl: boolean }).globalPrivacyControl = false;
   });
 
   it('should detect GPC signal when present', () => {
-    (window.navigator as any).globalPrivacyControl = true;
+    (window.navigator as { globalPrivacyControl: boolean }).globalPrivacyControl = true;
     
     const gpcDetected = detectGPC();
     expect(gpcDetected).toBe(true);
   });
 
   it('should respect GPC signal and deny analytics', () => {
-    (window.navigator as any).globalPrivacyControl = true;
+    (window.navigator as { globalPrivacyControl: boolean }).globalPrivacyControl = true;
     
     const analyticsMode = getAnalyticsMode();
     expect(analyticsMode).toBe('essential');
@@ -49,7 +49,7 @@ describe('GDPR Consent & GPC Tests', () => {
   });
 
   it('should allow analytics when consent is true and no GPC', () => {
-    (window.navigator as any).globalPrivacyControl = false;
+    (window.navigator as { globalPrivacyControl: boolean }).globalPrivacyControl = false;
     setStoredConsent({ analytics: true });
     
     const hasAnalyticsConsent = hasConsent('analytics');
@@ -57,7 +57,7 @@ describe('GDPR Consent & GPC Tests', () => {
   });
 
   it('should override consent when GPC is detected', () => {
-    (window.navigator as any).globalPrivacyControl = true;
+    (window.navigator as { globalPrivacyControl: boolean }).globalPrivacyControl = true;
     setStoredConsent({ analytics: true, marketing: true });
     
     // Even with consent=true, GPC should override
@@ -72,11 +72,11 @@ describe('GDPR Consent & GPC Tests', () => {
     
     // With consent, no GPC = full
     setStoredConsent({ analytics: true });
-    (window.navigator as any).globalPrivacyControl = false;
+    (window.navigator as { globalPrivacyControl: boolean }).globalPrivacyControl = false;
     expect(getAnalyticsMode()).toBe('full');
     
     // With GPC = essential only
-    (window.navigator as any).globalPrivacyControl = true;
+    (window.navigator as { globalPrivacyControl: boolean }).globalPrivacyControl = true;
     expect(getAnalyticsMode()).toBe('essential');
   });
 });

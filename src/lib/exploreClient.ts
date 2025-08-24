@@ -27,7 +27,7 @@ interface NearbyParams extends ExploreParams {
 class ExploreClient {
   private baseUrl = '/api';
 
-  private async request<T>(endpoint: string, params?: Record<string, any>): Promise<T> {
+  private async request<T>(endpoint: string, params?: Record<string, unknown>): Promise<T> {
     const requestId = `explore-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
     const startTime = Date.now();
     
@@ -59,7 +59,7 @@ class ExploreClient {
         requestId, 
         endpoint, 
         duration, 
-        error: error.message 
+        error: error instanceof Error ? error.message : String(error)
       });
       throw error;
     }
@@ -118,12 +118,12 @@ class ExploreClient {
     };
   }
 
-  async getEventsModule(params: { city?: string; range?: number } = {}): Promise<any[]> {
+  async getEventsModule(params: { city?: string; range?: number } = {}): Promise<Event[]> {
     // Mock implementation
     return [];
   }
 
-  async getToolsModule(params: { category?: string } = {}): Promise<any[]> {
+  async getToolsModule(params: { category?: string } = {}): Promise<Tool[]> {
     // Mock implementation
     return [];
   }

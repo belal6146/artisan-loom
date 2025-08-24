@@ -203,7 +203,7 @@ export const dataService = {
     const item = await adapter.getById(itemId);
     if (!item) throw new Error(`${itemType} not found`);
 
-    const likedBy = (item as any).likedBy || [];
+    const likedBy = (item as { likedBy?: ID[] }).likedBy || [];
     const isLiked = likedBy.includes(userId);
     
     const newLikedBy = isLiked 
@@ -213,7 +213,7 @@ export const dataService = {
     await adapter.update(itemId, {
       likes: newLikedBy.length,
       likedBy: newLikedBy,
-    } as any);
+    } as { likes: number; likedBy: ID[] });
 
     log.info(`${isLiked ? "Unliked" : "Liked"} ${itemType}`, { userId, itemId });
     return !isLiked;

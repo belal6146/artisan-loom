@@ -78,7 +78,7 @@ export const UnifiedCard = ({
 
   const renderContent = () => {
     switch (itemType) {
-      case 'post':
+      case 'post': {
         const post = item as Post;
         return (
           <div className="space-y-3">
@@ -112,8 +112,9 @@ export const UnifiedCard = ({
             )}
           </div>
         );
+      }
 
-      case 'artwork':
+      case 'artwork': {
         const artwork = item as Artwork;
         return (
            <div className="space-y-3">
@@ -149,8 +150,9 @@ export const UnifiedCard = ({
              </div>
            </div>
          );
+      }
 
-      case 'collaboration':
+      case 'collaboration': {
         const collab = item as Collaboration;
         return (
           <div className="space-y-3">
@@ -195,8 +197,9 @@ export const UnifiedCard = ({
             </div>
           </div>
         );
+      }
 
-      case 'resource':
+      case 'resource': {
         const resource = item as Resource;
         return (
           <div className="space-y-3">
@@ -221,6 +224,7 @@ export const UnifiedCard = ({
             <DomainBadge url={resource.url} />
           </div>
         );
+      }
 
       default:
         return null;

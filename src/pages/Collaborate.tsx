@@ -87,7 +87,7 @@ export default function Collaborate() {
         </header>
 
         {/* Collaborations Grid */}
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {mockCollaborations.map((collab) => (
             <Card key={collab.id} className="rounded-2xl border bg-background/60 backdrop-blur-sm shadow-sm hover:-translate-y-0.5 transition will-change-transform">
               {collab.coverImage && (
@@ -108,14 +108,15 @@ export default function Collaborate() {
                 <div className="flex items-start justify-between">
                   <div className="space-y-2">
                     <CardTitle className="text-heading">{collab.name}</CardTitle>
-                    <div className="flex items-center space-x-2">
+                    <div className="flex items-center gap-3">
                       <Avatar className="h-10 w-10 rounded-xl">
                         <AvatarImage src={collab.creator.avatar} alt={collab.creator.name} />
                         <AvatarFallback className="text-sm">{(collab.creator.name ?? "?").slice(0,2)}</AvatarFallback>
                       </Avatar>
-                      <span className="text-caption text-muted-foreground">
-                        by {collab.creator.name}
-                      </span>
+                      <div>
+                        <p className="font-medium">{collab.creator.name}</p>
+                        <p className="text-sm text-muted-foreground">{collab.creator.handle}</p>
+                      </div>
                     </div>
                   </div>
                   

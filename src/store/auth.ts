@@ -15,7 +15,7 @@ interface AuthState {
 }
 
 interface AuthActions {
-  login: (credentials: any) => Promise<void>;
+  login: (credentials: LoginCredentials) => Promise<void>;
   signup: (credentials: SignupCredentials) => Promise<void>;
   logout: () => void;
   checkAuth: () => Promise<void>;
@@ -94,7 +94,7 @@ export const useAuthStore = create<AuthStore>()(
       error: null,
 
       // Actions
-      login: async (credentials: any) => {
+      login: async (credentials: LoginCredentials) => {
         const validationResult = LoginCredentialsSchema.safeParse(credentials);
         if (!validationResult.success) {
           set({ error: "Invalid credentials format" });

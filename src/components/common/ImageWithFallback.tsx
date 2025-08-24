@@ -23,7 +23,7 @@ export default function ImageWithFallback({
       height={rest.height ?? 400}
       onError={(e) => {
         setSrc(fallback);
-        onError?.(e as any);
+        onError?.(e as React.SyntheticEvent<HTMLImageElement, Event>);
       }}
     />
   );

@@ -88,10 +88,8 @@ describe('BuyButton Component', () => {
     const mockStartArtworkCheckout = vi.mocked(startArtworkCheckout);
     
     // Create a promise that we can control
-    let resolveCheckout: () => void;
-    const checkoutPromise = new Promise<void>((resolve) => {
-      resolveCheckout = resolve;
-    });
+    let resolveCheckout: (v: any) => void;
+    const checkoutPromise = new Promise(r => (resolveCheckout = r));
     mockStartArtworkCheckout.mockReturnValue(checkoutPromise);
     
     const { getByRole } = render(
@@ -106,17 +104,15 @@ describe('BuyButton Component', () => {
     await user.click(button);
     
     // Should show loading state during checkout
-    expect(button).toBeDisabled();
+    await waitFor(() => expect(button).toBeDisabled());
     expect(button).toHaveTextContent('Processing...');
     
     // Resolve the checkout promise
-    resolveCheckout!();
+    resolveCheckout!({ ok: true });
     await checkoutPromise;
     
     // Wait for the state to update
-    await waitFor(() => {
-      expect(button).not.toBeDisabled();
-    });
+    await waitFor(() => expect(button).not.toBeDisabled());
   });
 
   it('should show error toast on payment failure', async () => {

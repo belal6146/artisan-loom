@@ -40,7 +40,7 @@ export const ToolsModule = ({ category, className }: ToolsModuleProps) => {
         </div>
         
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-          {tools.slice(0, 3).map((tool: any) => (
+          {tools.slice(0, 3).map((tool: { id: string; title: string; imageUrl?: string; rating: number; reviewsCount: number; price?: { amount: number; currency: string }; url: string; vendor?: { verified?: boolean } }) => (
             <div key={tool.id} className="p-3 bg-background rounded-lg border">
               <div className="space-y-2">
                 {tool.imageUrl && (

@@ -64,7 +64,7 @@ export const FilterBar = ({ mode, onFiltersChange, viewMode = 'grid', onViewMode
     setSelectedEventType(type);
     if (mode === 'events') {
       onFiltersChange({
-        type: type !== 'all' ? type as any : undefined,
+        type: type !== 'all' ? type as (typeof eventTypes)[number] : undefined,
         city: city || undefined,
         radiusKm: radiusKm[0],
         verifiedOnly,
@@ -76,7 +76,7 @@ export const FilterBar = ({ mode, onFiltersChange, viewMode = 'grid', onViewMode
     setCity(value);
     if (mode === 'events') {
       onFiltersChange({
-        type: selectedEventType !== 'all' ? selectedEventType as any : undefined,
+        type: selectedEventType !== 'all' ? selectedEventType as (typeof eventTypes)[number] : undefined,
         city: value || undefined,
         radiusKm: radiusKm[0],
         verifiedOnly,

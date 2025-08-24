@@ -1,7 +1,7 @@
 export function friendlyError(e: unknown): string {
   if (typeof e === "string") return e;
   
-  const msg = (e as any)?.message ?? "Something went wrong";
+  const msg = e instanceof Error ? e.message : String(e);
   
   // Handle common error types
   if (/ZodError/i.test(msg)) return "Please check the form inputs.";
@@ -13,7 +13,7 @@ export function friendlyError(e: unknown): string {
   return msg;
 }
 
-export function logError(context: string, error: unknown, extra?: Record<string, any>) {
+export function logError(context: string, error: unknown, extra?: Record<string, unknown>) {
   console.error(`[${context}]`, {
     message: friendlyError(error),
     error,

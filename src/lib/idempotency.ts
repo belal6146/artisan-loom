@@ -84,7 +84,7 @@ export function withIdempotency<T extends unknown[], R>(
   ttl: number = 15 * 60 * 1000 // 15 minutes default
 ) {
   return function (
-    target: any,
+    target: object,
     propertyKey: string,
     descriptor: PropertyDescriptor
   ) {

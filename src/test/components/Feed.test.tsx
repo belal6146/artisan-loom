@@ -5,16 +5,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 // Mock the Feed component to avoid complex dependencies
 vi.mock('@/pages/Feed', () => ({
-  default: () => {
-    const div = document.createElement('div');
-    div.setAttribute('data-testid', 'feed-container');
-    div.innerHTML = `
-      <div data-testid="new-post">New Post Form</div>
-      <div data-testid="post-input">Post Input</div>
-      <div data-testid="comment-input">Comment Input</div>
-    `;
-    return div;
-  },
+  default: () => 'feed-container',
 }));
 
 // Mock auth state

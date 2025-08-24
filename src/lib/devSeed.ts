@@ -39,6 +39,17 @@ export async function ensureDemoData() {
       purchases: purchaseAdapter,
     });
     
+    try {
+      const [u,a,p,e,t,pr] = await Promise.all([
+        userAdapter.list(), artworkAdapter.list(), postAdapter.list(),
+        eventAdapter.list?.() ?? [], toolsAdapter.list?.() ?? [],
+        purchaseAdapter.list?.() ?? []
+      ]);
+      console.info('[seed:report]', JSON.stringify({
+        users:u.length, artworks:a.length, posts:p.length,
+        events:e.length, tools:t.length, purchases:pr.length
+      }));
+    } catch { /* dev-only: best effort */ }
     return;
   }
 
@@ -166,5 +177,17 @@ export async function ensureDemoData() {
     purchases: purchaseAdapter,
   });
   
+  // report counts once
+  try {
+    const [u,a,p,e,t,pr] = await Promise.all([
+      userAdapter.list(), artworkAdapter.list(), postAdapter.list(),
+      eventAdapter.list?.() ?? [], toolsAdapter.list?.() ?? [],
+      purchaseAdapter.list?.() ?? []
+    ]);
+    console.info('[seed:report]', JSON.stringify({
+      users:u.length, artworks:a.length, posts:p.length,
+      events:e.length, tools:t.length, purchases:pr.length
+    }));
+  } catch { /* dev-only */ }
   console.log("✅ Dev seed completed - 10 users with content created");
 }

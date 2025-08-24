@@ -40,7 +40,7 @@ export default function ExploreHome() {
     if (newSearch !== currentSearch) {
       setSearchParams(newParams, { replace: true });
     }
-  }, [activeTab, sort, setSearchParams]);
+  }, [activeTab, sort, setSearchParams, searchParams]);
 
   const handleTabChange = (newTab: ExploreTab) => {
     setActiveTab(newTab);

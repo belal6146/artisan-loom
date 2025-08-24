@@ -14,10 +14,10 @@ interface LogContext {
 
 const PII_FIELDS = ['password', 'token', 'email', 'ip', 'authorization'] as const;
 
-function redactPII(obj: any): any {
+function redactPII(obj: unknown): unknown {
   if (typeof obj !== 'object' || obj === null) return obj;
   
-  const redacted = { ...obj };
+  const redacted = { ...obj as Record<string, unknown> };
   for (const field of PII_FIELDS) {
     if (field in redacted) {
       redacted[field] = '[REDACTED]';
@@ -41,7 +41,7 @@ function canShipLogs(): boolean {
   try {
     const consent = localStorage.getItem('consent');
     const consentData = consent ? JSON.parse(consent) : null;
-    const gpcDenied = (navigator as any).globalPrivacyControl === true;
+    const gpcDenied = (navigator as { globalPrivacyControl?: boolean }).globalPrivacyControl === true;
     
     return consentData?.analytics === true && !gpcDenied;
   } catch {
@@ -68,7 +68,7 @@ class Logger {
     return `${prefix} ${message}`;
   }
 
-  private async shipLog(level: LogLevel, message: string, context?: LogContext) {
+  private async shipLog(level: LogLevel, message: string, context?: LogContext): Promise<void> {
     if (!canShipLogs()) return;
     
     // Sample logs to avoid overwhelming the server (30% sampling)

@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { track } from "@/lib/track";
-import { aiClient } from "@/lib/aiClient";
+import { generateImageWithFallback } from "@/lib/aiClient";
 import { log } from "@/lib/log";
 import { env } from "@/lib/env";
 import { IMAGE_STYLES, type AIProvider } from "@/types/ai";
@@ -33,7 +33,7 @@ const STYLE_OPTIONS = [
 
 export default function AIStyleExplorerTab() {
   const [provider, setProvider] = useState<"local"|"openai"|"gemini"|"deepseek">("local");
-  const [style, setStyle] = useState<string>("impressionism");
+  const [style, setStyle] = useState<string|undefined>(undefined);
   const [prompt, setPrompt] = useState("");
   const [negative, setNegative] = useState("");
   const [strength, setStrength] = useState([0.65]);
@@ -60,7 +60,7 @@ export default function AIStyleExplorerTab() {
 
     try {
       console.log("Calling aiClient.generateImage...");
-      const result = await aiClient.generateImage({
+      const result = await generateImageWithFallback({
         prompt: `${prompt} in ${STYLE_OPTIONS.find(s => s.value === style)?.label || style} style`,
         refImageUrl: refImage,
         style,
@@ -128,24 +128,11 @@ export default function AIStyleExplorerTab() {
           <div className="space-y-2">
             <Label htmlFor="style">Art Style</Label>
             <Select value={style} onValueChange={setStyle}>
-              <SelectTrigger aria-label="Choose an art style">
+              <SelectTrigger aria-label="Select style">
                 <SelectValue placeholder="Select style" />
               </SelectTrigger>
-              <SelectContent className="bg-background border z-50">
-                <SelectItem value="impressionism">Impressionism</SelectItem>
-                <SelectItem value="baroque">Baroque</SelectItem>
-                <SelectItem value="cubism">Cubism</SelectItem>
-                <SelectItem value="surrealism">Surrealism</SelectItem>
-                <SelectItem value="ukiyoe">Ukiyo-e</SelectItem>
-                <SelectItem value="bauhaus">Bauhaus</SelectItem>
-                <SelectItem value="madhubani">Madhubani</SelectItem>
-                <SelectItem value="persian">Persian miniatures</SelectItem>
-                <SelectItem value="watercolor">Watercolor wash</SelectItem>
-                <SelectItem value="pointillism">Pointillism</SelectItem>
-                <SelectItem value="linocut">Linocut</SelectItem>
-                <SelectItem value="woodblock">Woodblock</SelectItem>
-                <SelectItem value="pastel">Pastel</SelectItem>
-                <SelectItem value="acrylic">Acrylic impasto</SelectItem>
+              <SelectContent>
+                {STYLE_OPTIONS.map(s => <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>)}
               </SelectContent>
             </Select>
           </div>

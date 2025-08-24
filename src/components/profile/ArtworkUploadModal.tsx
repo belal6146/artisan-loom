@@ -52,7 +52,7 @@ export const ArtworkUploadModal = ({ onClose, onUpload }: ArtworkUploadModalProp
 
     setIsSubmitting(true);
     try {
-      let artworkData = {
+      const artworkData = {
         ...data,
         userId: user.id,
         // Remove price if not for sale

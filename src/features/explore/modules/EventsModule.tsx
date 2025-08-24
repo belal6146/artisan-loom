@@ -38,7 +38,7 @@ export const EventsModule = ({ city, range = 25, className }: EventsModuleProps)
         </div>
         
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-          {events.slice(0, 3).map((event: any) => (
+          {events.slice(0, 3).map((event: { id: string; title: string; date?: string; location?: string; url: string; verified?: boolean }) => (
             <div key={event.id} className="p-3 bg-background rounded-lg border">
               <div className="space-y-2">
                 <h4 className="font-medium text-sm line-clamp-2">{event.title}</h4>

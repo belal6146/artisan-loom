@@ -35,7 +35,7 @@ describe('Contact Component Tests', () => {
     expect(getByLabelText(/name/i)).toBeInTheDocument();
     expect(getByLabelText(/email/i)).toBeInTheDocument();
     expect(getByLabelText(/message/i)).toBeInTheDocument();
-    expect(getByRole('button', { name: /send/i })).toBeInTheDocument();
+    expect(getByRole('button', { name: /Send Message/i })).toBeInTheDocument();
   });
 
   it('should validate form inputs with Zod', async () => {
@@ -47,7 +47,7 @@ describe('Contact Component Tests', () => {
       </TestWrapper>
     );
     
-    const submitBtn = getByRole('button', { name: /send/i });
+    const submitBtn = getByRole('button', { name: /Send Message/i });
     await user.click(submitBtn);
     
     // Form validation should prevent submission
@@ -92,7 +92,7 @@ describe('Contact Component Tests', () => {
       'This is a test message with enough characters to pass validation.'
     );
     
-    const submitBtn = getByRole('button', { name: /send/i });
+    const submitBtn = getByRole('button', { name: /Send Message/i });
     await user.click(submitBtn);
     
     // Should show success message (would need real implementation)

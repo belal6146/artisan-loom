@@ -36,7 +36,7 @@ export const ToolsMarketplace = () => {
   const { data: tools, isLoading, error } = useTools({
     filters: {
       category: selectedCategory !== 'All' ? selectedCategory : undefined,
-      sort: selectedSort as any,
+      sort: selectedSort as (typeof sortOptions)[number]['value'],
       minRating
     }
   });

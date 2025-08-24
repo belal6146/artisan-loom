@@ -4,7 +4,7 @@ import { log } from "./log";
 export function track(event: string, props: Record<string, unknown> = {}) {
   // Check consent and GPC
   const hasConsent = getAnalyticsConsent();
-  const gpcDenied = (navigator as any)?.globalPrivacyControl === true;
+  const gpcDenied = (navigator as { globalPrivacyControl?: boolean })?.globalPrivacyControl === true;
   
   if (!hasConsent || gpcDenied) return;
   
