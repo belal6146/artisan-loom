@@ -11,7 +11,7 @@ import { aiClient } from "@/lib/aiClient";
 import { log } from "@/lib/log";
 import { IMAGE_STYLES, type AIProvider } from "@/types/ai";
 
-const PROVIDERS: AIProvider[] = ["gemini", "openai", "deepseek", "local"];
+const PROVIDERS = ["local", "openai", "gemini", "deepseek"] as const;
 
 const STYLE_OPTIONS = [
   { label: 'Impressionism', value: 'impressionism' },
@@ -31,7 +31,7 @@ const STYLE_OPTIONS = [
 ] as const;
 
 export default function AIStyleExplorerTab() {
-  const [provider, setProvider] = useState<AIProvider>("local");
+  const [provider, setProvider] = useState<"local"|"openai"|"gemini"|"deepseek">("local");
   const [style, setStyle] = useState<string>("impressionism");
   const [prompt, setPrompt] = useState("");
   const [negative, setNegative] = useState("");
@@ -99,7 +99,7 @@ export default function AIStyleExplorerTab() {
               {PROVIDERS.map((p) => (
                 <button
                   key={p}
-                  onClick={() => setProvider(p)}
+                  onClick={() => setProvider(p as any)}
                   className={`px-3 py-1 rounded-full border text-sm transition-colors ${
                     provider === p
                       ? "bg-primary text-primary-foreground"

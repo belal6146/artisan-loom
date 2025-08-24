@@ -198,7 +198,7 @@ export default function Profile() {
           onTabChange={setActiveTab}
           isOwnProfile={!!isOwner}
           extraTabs={
-            import.meta.env.DEV || isOwner ? [
+            (import.meta.env.VITE_AI_ENABLE_IMAGE !== "false" && (import.meta.env.DEV || isOwner)) ? [
               {
                 key: "ai-explorer",
                 label: "AI Explorer", 

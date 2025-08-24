@@ -3,21 +3,18 @@ import type { Config } from "tailwindcss";
 export default {
 	darkMode: ["class"],
 	content: [
-		"./pages/**/*.{ts,tsx}",
-		"./components/**/*.{ts,tsx}",
-		"./app/**/*.{ts,tsx}",
+		"index.html",
 		"./src/**/*.{ts,tsx}",
+		"./server/**/*.{ts,ts}",
 	],
 	prefix: "",
 	theme: {
 		container: {
 			center: true,
 			padding: {
-				DEFAULT: '1rem',
-				sm: '2rem',
-				lg: '4rem',
-				xl: '6rem',
-				'2xl': '8rem',
+				DEFAULT: "1rem",
+				md: "1.5rem",
+				xl: "2rem"
 			},
 			screens: {
 				'2xl': '1400px'
@@ -65,7 +62,8 @@ export default {
 				lg: 'var(--radius-lg)',
 				md: 'var(--radius)',
 				sm: 'var(--radius-sm)',
-				'2xl': '1.5rem'
+				xl: "1rem",
+				'2xl': '1.25rem'
 			},
 			spacing: {
 				'18': '4.5rem',
@@ -73,6 +71,8 @@ export default {
 				'128': '32rem'
 			},
 			boxShadow: {
+				card: "0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04)",
+				cardHover: "0 8px 20px rgba(0,0,0,.08)",
 				'subtle': 'var(--shadow-subtle)',
 				'soft': 'var(--shadow-soft)', 
 				'medium': 'var(--shadow-medium)',

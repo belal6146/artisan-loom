@@ -17,7 +17,7 @@ export async function apiFetch(path: string, init?: RequestInit) {
     
     if (!res.ok) {
       log.error("request_failed", { requestId, route: path, status: res.status, durationMs });
-      throw new Error(`Request failed: ${res.status} ${res.statusText}`);
+      throw new Error(await res.text());
     }
     
     log.info("request_ok", { requestId, route: path, status: res.status, durationMs });

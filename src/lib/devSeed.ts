@@ -5,29 +5,36 @@ import { track } from "./track";
 
 export async function ensureDemoData() {
   if (!import.meta.env.DEV) return;
+  
+  // Skip if already seeded this version
+  if (localStorage.getItem("seed:v2")) {
+    // Ensure demo_user is logged in
+    const existing = await userAdapter.getAll();
+    const demoUser = existing.find(u => u.username === "demo_user");
+    if (demoUser) {
+      const authUser = {
+        id: demoUser.id,
+        email: "demo@artisan.app",
+        name: demoUser.name,
+        username: demoUser.username,
+        avatar: demoUser.avatar
+      };
+      
+      useAuthStore.setState({
+        user: authUser,
+        isAuthenticated: true,
+        isLoading: false,
+        error: null
+      });
+    }
+    return;
+  }
 
   const existing = await userAdapter.getAll();
   const haveDemo = existing.some(u => u.username === "demo_user");
   
   if (haveDemo && existing.length >= 10) {
-    // Ensure demo_user is logged in
-    const demoUser = existing.find(u => u.username === "demo_user")!;
-    const authUser = {
-      id: demoUser.id,
-      email: "demo@artisan.app",
-      name: demoUser.name,
-      username: demoUser.username,
-      avatar: demoUser.avatar
-    };
-    
-    useAuthStore.setState({
-      user: authUser,
-      isAuthenticated: true,
-      isLoading: false,
-      error: null
-    });
-    
-    console.log("✅ Demo data already exists, auto-logged in as demo_user");
+    localStorage.setItem("seed:v2", "true");
     return;
   }
 
@@ -57,27 +64,49 @@ export async function ensureDemoData() {
     if (i % 2 === 0) await dataService.followUser(users[i].id, users[0].id).catch(() => {});
   }
 
-  // Create artworks + posts for each user
+  // Create artworks + posts for each user (more content)
   for (const u of users) {
-    const artwork = await artworkAdapter.create({
-      userId: u.id,
-      title: `Landscape by ${u.name}`,
-      description: "Study of light and color",
-      imageUrl: `https://picsum.photos/seed/${u.id}-a/800/600`,
-      category: "painting",
-      forSale: Math.random() > 0.4,
-      price: { amount: 25000 + Math.floor(Math.random() * 10000), currency: "USD" },
-      privacy: "public",
-      location: "Remote",
-      meta: { tags: ["landscape", "color"], colors: ["green", "blue"], aiGenerated: false }
-    });
+    // Create 2-3 artworks per user
+    for (let i = 0; i < 3; i++) {
+      const categories = ["painting", "sculpture", "digital", "photography"] as const;
+      const category = categories[Math.floor(Math.random() * categories.length)];
+      
+      await artworkAdapter.create({
+        userId: u.id,
+        title: `${category === "painting" ? "Landscape" : category === "sculpture" ? "Form Study" : category === "digital" ? "Abstract Vision" : "Portrait"} ${i + 1} by ${u.name}`,
+        description: `A beautiful ${category} exploring light and form`,
+        imageUrl: `https://picsum.photos/seed/${u.id}-a${i}/800/600`,
+        category,
+        forSale: Math.random() > 0.3,
+        price: { amount: 15000 + Math.floor(Math.random() * 50000), currency: "USD" },
+        privacy: Math.random() > 0.1 ? "public" : "private",
+        location: "Remote",
+        meta: { 
+          tags: ["art", category, "original"], 
+          colors: ["blue", "green", "red", "yellow"][Math.floor(Math.random() * 4)], 
+          aiGenerated: Math.random() > 0.8 
+        }
+      });
+    }
 
-    await postAdapter.create({
-      authorId: u.id,
-      type: "image",
-      content: "New piece!",
-      mediaUrl: `https://picsum.photos/seed/${u.id}-p/1200/800`
-    });
+    // Create 3-5 posts per user
+    for (let i = 0; i < 5; i++) {
+      const types = ["image", "text", "video"] as const;
+      const type = types[Math.floor(Math.random() * types.length)];
+      
+      await postAdapter.create({
+        authorId: u.id,
+        type,
+        content: [
+          "Working on something new 🎨",
+          "Love how this turned out!",
+          "Experimenting with colors today",
+          "Inspired by nature",
+          "Process video of my latest piece"
+        ][i],
+        mediaUrl: type !== "text" ? `https://picsum.photos/seed/${u.id}-p${i}/1200/800` : undefined
+      });
+    }
   }
 
   // Create purchases for insights (buyer: demo_user)
@@ -111,6 +140,7 @@ export async function ensureDemoData() {
     error: null
   });
 
+  localStorage.setItem("seed:v2", "true");
   track("dev_seed_completed", { userCount: users.length });
   console.log("✅ Dev seed completed - 10 users with content created");
 }
