@@ -1,73 +1,178 @@
-# Welcome to your Lovable project
+# Artisan
 
-## Project info
+A minimal, production-ready art platform connecting emerging artists worldwide.
 
-**URL**: https://lovable.dev/projects/37ea8f19-8683-4e20-ac8c-162a9867f4fe
+## 🎨 About
 
-## How can I edit this code?
+Artisan is a sophisticated platform where artists can:
+- **Discover** unique artworks from emerging creators
+- **Connect** with like-minded artists and art enthusiasts  
+- **Collaborate** on creative projects and commissions
+- **Learn** through courses and workshops from professionals
+- **Experience** galleries, competitions, and art events
+- **Grow** their artistic practice and business
 
-There are several ways of editing your application.
+## 🛠 Tech Stack
 
-**Use Lovable**
+**Frontend:**
+- React 18 + TypeScript (strict mode)
+- Vite for build tooling
+- Tailwind CSS + shadcn/ui components
+- React Router for navigation
+- TanStack Query for data fetching
+- Zustand for state management
+- Zod for validation
+- React Hook Form for forms
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/37ea8f19-8683-4e20-ac8c-162a9867f4fe) and start prompting.
+**Architecture:**
+- Feature-based folder structure
+- SOLID/DRY/KISS principles
+- Type-safe API layer
+- Normalized data structures
+- Error boundaries & toast notifications
+- Accessibility-first design
 
-Changes made via Lovable will be committed automatically to this repo.
+## 🚀 Quick Start
 
-**Use your preferred IDE**
+```bash
+# Install dependencies
+npm install
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+# Start development server
 npm run dev
+
+# Build for production
+npm run build
+
+# Preview production build
+npm run preview
+
+# Run type checking
+npm run typecheck
+
+# Run linting
+npm run lint
+
+# Run tests
+npm test
 ```
 
-**Edit a file directly in GitHub**
+## 📁 Project Structure
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+```
+src/
+├── components/          # Reusable UI components
+│   ├── ui/             # shadcn/ui primitives
+│   ├── layout/         # Layout components
+│   └── auth/           # Authentication components
+├── pages/              # Route components
+├── store/              # Zustand stores
+├── lib/                # Utilities & services
+│   ├── api-client.ts   # HTTP client
+│   ├── env.ts          # Environment validation
+│   ├── log.ts          # Structured logging
+│   ├── storage.ts      # localStorage wrapper
+│   └── normalizers.ts  # Data normalization
+├── types.ts            # Core type definitions
+└── schemas.ts          # Zod validation schemas
+```
 
-**Use GitHub Codespaces**
+## 🔐 Environment Variables
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+Create a `.env.local` file:
 
-## What technologies are used for this project?
+```bash
+VITE_API_URL=http://localhost:3000
+VITE_APP_NAME=Artisan
+VITE_APP_ENV=development
+```
 
-This project is built with:
+## 🎭 Demo Credentials
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+**Email:** `demo@artisan.app`  
+**Password:** `password`
 
-## How can I deploy this project?
+## 🏗 Architecture Principles
 
-Simply open [Lovable](https://lovable.dev/projects/37ea8f19-8683-4e20-ac8c-162a9867f4fe) and click on Share -> Publish.
+- **Small files** (<200 lines each)
+- **Feature folders** over type folders
+- **Composition** over inheritance
+- **Type safety** with no `any` types
+- **Accessibility** built-in from the start
+- **Performance** optimized by default
 
-## Can I connect a custom domain to my Lovable project?
+## 🎨 Design System
 
-Yes, you can!
+The platform uses a sophisticated design system with:
+- **Editorial aesthetic** - Clean, calm, and professional
+- **Semantic color tokens** - HSL-based with light/dark modes
+- **Typography scale** - Inter font with display/heading/body styles
+- **Rounded corners** - Consistent 1rem radius (rounded-2xl)
+- **Soft shadows** - Subtle depth without heaviness
+- **Smooth animations** - Respects `prefers-reduced-motion`
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+## 🔒 Security & Quality
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+- **Input validation** with Zod schemas
+- **Error boundaries** for graceful failures
+- **XSS protection** via React's built-in escaping
+- **Type safety** enforced at build time
+- **ESLint + Prettier** for code quality
+- **No secrets** in source code
+
+## 🌐 API Integration
+
+The frontend is designed to work with a Fastify backend providing:
+- `/api/users` - User management
+- `/api/artworks` - Artwork CRUD
+- `/api/posts` - Social posts
+- `/api/collaborations` - Project collaboration
+- `/api/events` - Art events and experiences
+- `/api/purchases` - Artwork transactions
+
+Currently uses mock services for development.
+
+## 🎯 Accessibility
+
+- Semantic HTML structure
+- Keyboard navigation support
+- Screen reader friendly
+- Focus management
+- ARIA labels and descriptions
+- Color contrast compliance
+- Reduced motion support
+
+## 📱 Responsive Design
+
+Mobile-first responsive design with breakpoints:
+- `sm`: 640px+
+- `md`: 768px+  
+- `lg`: 1024px+
+- `xl`: 1280px+
+- `2xl`: 1400px+
+
+## 🚢 Deployment
+
+The app is optimized for deployment on:
+- **Vercel** (recommended)
+- **Netlify**
+- **Any static hosting**
+
+Build artifacts are generated in the `dist/` folder.
+
+## 🤝 Contributing
+
+1. Follow the established architecture patterns
+2. Keep components under 200 lines
+3. Use TypeScript strictly (no `any`)
+4. Test your changes
+5. Follow the design system
+6. Ensure accessibility compliance
+
+## 📄 License
+
+MIT License - see LICENSE file for details.
+
+---
+
+Built with ❤️ for the creative community.
