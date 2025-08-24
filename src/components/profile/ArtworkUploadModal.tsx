@@ -16,6 +16,7 @@ import { useAuthStore } from "@/store/auth";
 import { log } from "@/lib/log";
 import { CreateArtworkSchema, type CreateArtwork } from "@/schemas";
 import { Upload, DollarSign, Tag } from "lucide-react";
+import type { Money } from "@/types";
 
 interface ArtworkUploadModalProps {
   onClose: () => void;
