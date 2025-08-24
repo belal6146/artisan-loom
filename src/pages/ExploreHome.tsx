@@ -4,6 +4,11 @@ import { AppLayout } from "@/components/layout/AppLayout";
 import { ExploreTabs } from "@/features/explore/ExploreTabs";
 import { GlobalComposer } from "@/features/explore/GlobalComposer";
 import { ForYouStream } from "@/features/explore/streams/ForYouStream";
+import { FollowingStream } from "@/features/explore/streams/FollowingStream";
+import { NearbyStream } from "@/features/explore/streams/NearbyStream";
+import { TrendingStream } from "@/features/explore/streams/TrendingStream";
+import { CollaborationsStream } from "@/features/explore/streams/CollaborationsStream";
+import { LearnStream } from "@/features/explore/streams/LearnStream";
 import { storage } from "@/lib/storage";
 import { normalizeTab, normalizeSort } from "@/lib/filters";
 import type { ExploreTab, Sort } from "@/lib/filters";
@@ -67,40 +72,15 @@ export default function ExploreHome() {
       case 'for-you':
         return <ForYouStream {...streamProps} />;
       case 'following':
-        return (
-          <div className="text-center py-8">
-            <h3 className="text-lg font-semibold mb-2">Following Stream</h3>
-            <p className="text-muted-foreground">Coming soon...</p>
-          </div>
-        );
+        return <FollowingStream {...streamProps} />;
       case 'nearby':
-        return (
-          <div className="text-center py-8">
-            <h3 className="text-lg font-semibold mb-2">Nearby Stream</h3>
-            <p className="text-muted-foreground">Coming soon...</p>
-          </div>
-        );
+        return <NearbyStream {...streamProps} />;
       case 'trending':
-        return (
-          <div className="text-center py-8">
-            <h3 className="text-lg font-semibold mb-2">Trending Stream</h3>
-            <p className="text-muted-foreground">Coming soon...</p>
-          </div>
-        );
+        return <TrendingStream {...streamProps} />;
       case 'collaborations':
-        return (
-          <div className="text-center py-8">
-            <h3 className="text-lg font-semibold mb-2">Collaborations Stream</h3>
-            <p className="text-muted-foreground">Coming soon...</p>
-          </div>
-        );
+        return <CollaborationsStream {...streamProps} />;
       case 'learn':
-        return (
-          <div className="text-center py-8">
-            <h3 className="text-lg font-semibold mb-2">Learn Stream</h3>
-            <p className="text-muted-foreground">Coming soon...</p>
-          </div>
-        );
+        return <LearnStream {...streamProps} />;
       default:
         return <ForYouStream {...streamProps} />;
     }

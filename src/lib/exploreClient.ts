@@ -15,6 +15,7 @@ interface ExploreParams {
   cursor?: string;
   limit?: number;
   sort?: Sort;
+  timeframe?: '24h' | '7d';
 }
 
 interface NearbyParams extends ExploreParams {
@@ -94,7 +95,7 @@ class ExploreClient {
   }
 
   async getTrending(params: ExploreParams = {}): Promise<ExploreResponse> {
-    // Mock implementation
+    // Mock implementation with timeframe support
     return {
       items: [],
       hasMore: false
