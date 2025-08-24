@@ -6,6 +6,7 @@ import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { Button } from "@/components/ui/button";
 import { ProfileHeader } from "@/features/profile/header/ProfileHeader";
 import { ProfileTabs } from "@/features/profile/tabs/ProfileTabs";
+import { InsightsTab } from "@/features/profile/insights/InsightsTab";
 import AIStyleExplorerTab from "@/features/profile/AIStyleExplorerTab";
 import { useAuthStore } from "@/store/auth";
 import { getUserByHandle } from "@/lib/users";
@@ -120,7 +121,7 @@ export default function Profile() {
       case "connections":
         return <SimpleTab>Connections content coming soon</SimpleTab>;
       case "insights":
-        return <SimpleTab>Insights content coming soon</SimpleTab>;
+        return <InsightsTab userId={user.id} isOwnProfile={isOwner} />;
       default:
         return (
           <SimpleTab>

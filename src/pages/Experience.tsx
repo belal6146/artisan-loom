@@ -1,8 +1,7 @@
 import { useSearchParams } from "react-router-dom";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { EventsList } from "@/features/experience/EventsList";
-import { ToolsMarketplace } from "@/features/experience/ToolsMarketplace";
+import { EventsList, ToolsMarketplace } from "@/features/experience/ExperienceModules";
 
 type ExperienceTab = 'events' | 'tools';
 

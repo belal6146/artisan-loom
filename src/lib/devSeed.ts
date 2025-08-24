@@ -69,8 +69,15 @@ export function devSeed() {
       id: "pur1",
       buyerId: userId,
       artworkId: "a1", 
-      price: { amount: 180.00, currency: "USD" },
+      price: { amount: 18000, currency: "USD" },
       purchasedAt: now
+    },
+    {
+      id: "pur2", 
+      buyerId: userId,
+      artworkId: "a2",
+      price: { amount: 5000, currency: "USD" },
+      purchasedAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()
     }
   ];
 
