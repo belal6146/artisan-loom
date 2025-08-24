@@ -153,7 +153,7 @@ export default function Profile() {
 
   return (
     <AppLayout>
-      <div className="py-8 space-y-8 max-w-7xl mx-auto">
+      <div className="xl:col-span-12 py-8 space-y-8">
         <div className="grid md:grid-cols-[200px,1fr] gap-6 items-start">
           <div className="flex flex-col items-center md:items-start space-y-4">
             <img 
@@ -197,13 +197,15 @@ export default function Profile() {
           activeTab={activeTab}
           onTabChange={setActiveTab}
           isOwnProfile={!!isOwner}
-          extraTabs={[
-            {
-              key: "ai-explorer",
-              label: "AI Explorer", 
-              element: <AIStyleExplorerTab />
-            }
-          ]}
+          extraTabs={
+            import.meta.env.DEV || isOwner ? [
+              {
+                key: "ai-explorer",
+                label: "AI Explorer", 
+                element: <AIStyleExplorerTab />
+              }
+            ] : []
+          }
         />
 
         <div>

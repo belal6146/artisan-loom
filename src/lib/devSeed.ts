@@ -26,6 +26,8 @@ export async function ensureDemoData() {
       isLoading: false,
       error: null
     });
+    
+    console.log("✅ Demo data already exists, auto-logged in as demo_user");
     return;
   }
 

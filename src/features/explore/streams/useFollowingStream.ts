@@ -19,5 +19,6 @@ export const useFollowingStream = ({ sort, pager }: UseFollowingStreamProps) => 
     initialPageParam: undefined as string | undefined,
     getNextPageParam: (lastPage) => lastPage.nextCursor,
     staleTime: 2 * 60 * 1000, // 2 minutes
+    enabled: true, // Always enabled, filtering happens in exploreClient
   });
 };

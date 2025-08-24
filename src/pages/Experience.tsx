@@ -23,10 +23,10 @@ export default function Experience() {
 
   return (
     <AppLayout>
-      <div className="min-h-screen">
+      <div className="xl:col-span-12 min-h-screen">
         {/* Hero section */}
         <div className="bg-gradient-to-br from-primary/5 via-secondary/5 to-accent/5 border-b border-border">
-          <div className="container mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-12">
+          <div className="py-12">
             <div className="text-center space-y-4">
               <h1 className="text-4xl font-bold">Experience</h1>
               <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
@@ -37,7 +37,7 @@ export default function Experience() {
         </div>
 
         {/* Content */}
-        <div className="container mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-8">
+        <div className="py-8">
           <Tabs value={activeTab} onValueChange={handleTabChange}>
             <TabsList className="grid w-full grid-cols-2 mb-8" aria-label="Experience sections">
               <TabsTrigger 

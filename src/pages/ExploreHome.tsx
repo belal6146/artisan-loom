@@ -88,10 +88,10 @@ export default function ExploreHome() {
 
   return (
     <AppLayout>
-      <div className="min-h-screen">
+      <div className="xl:col-span-12 min-h-screen">
         {/* Hero section with gradient background */}
         <div className="bg-gradient-to-br from-primary/5 via-secondary/5 to-accent/5 border-b border-border">
-          <div className="container max-w-6xl mx-auto py-8">
+          <div className="py-8">
             <div className="max-w-2xl mx-auto">
               <h1 className="text-heading-xl font-bold mb-2">Explore</h1>
               <p className="text-muted-foreground mb-6">
@@ -115,7 +115,7 @@ export default function ExploreHome() {
         />
 
         {/* Content streams */}
-        <div className="container max-w-6xl mx-auto py-6">
+        <div className="py-6">
           {renderStream()}
         </div>
       </div>
