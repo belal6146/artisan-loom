@@ -41,13 +41,13 @@ describe('Contact Component Tests', () => {
   it('should validate form inputs with Zod', async () => {
     const user = userEvent.setup();
     
-    render(
+    const { getByRole } = render(
       <TestWrapper>
         <Contact />
       </TestWrapper>
     );
     
-    const submitBtn = screen.getByRole('button', { name: /send/i });
+    const submitBtn = getByRole('button', { name: /send/i });
     await user.click(submitBtn);
     
     // Form validation should prevent submission
@@ -78,21 +78,21 @@ describe('Contact Component Tests', () => {
   it('should show success toast on valid submission', async () => {
     const user = userEvent.setup();
     
-    render(
+    const { getByLabelText, getByRole } = render(
       <TestWrapper>
         <Contact />
       </TestWrapper>
     );
     
     // Fill form with valid data
-    await user.type(screen.getByLabelText(/name/i), 'John Doe');
-    await user.type(screen.getByLabelText(/email/i), 'john@example.com');
+    await user.type(getByLabelText(/name/i), 'John Doe');
+    await user.type(getByLabelText(/email/i), 'john@example.com');
     await user.type(
-      screen.getByLabelText(/message/i), 
+      getByLabelText(/message/i), 
       'This is a test message with enough characters to pass validation.'
     );
     
-    const submitBtn = screen.getByRole('button', { name: /send/i });
+    const submitBtn = getByRole('button', { name: /send/i });
     await user.click(submitBtn);
     
     // Should show success message (would need real implementation)

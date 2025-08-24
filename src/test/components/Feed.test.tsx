@@ -63,17 +63,12 @@ const TestWrapper = ({ children }: { children: React.ReactNode }) => {
 
 describe('Feed Component Tests', () => {
   it('should render new post form', () => {
-    render(
-      <TestWrapper>
-        <Feed />
-      </TestWrapper>
-    );
-    
     const { getByTestId } = render(
       <TestWrapper>
         <Feed />
       </TestWrapper>
     );
+    
     expect(getByTestId('new-post')).toBeInTheDocument();
     expect(getByTestId('post-input')).toBeInTheDocument();
   });
@@ -81,13 +76,13 @@ describe('Feed Component Tests', () => {
   it('should handle post submission', async () => {
     const user = userEvent.setup();
     
-    render(
+    const { getByTestId } = render(
       <TestWrapper>
         <Feed />
       </TestWrapper>
     );
     
-    const input = screen.getByTestId('post-input');
+    const input = getByTestId('post-input');
     await user.type(input, 'Test post content');
     
     // Should trigger onSubmit in real implementation
@@ -102,13 +97,13 @@ describe('Feed Component Tests', () => {
       getPosts: vi.fn().mockResolvedValue([mockPost]),
     }));
     
-    render(
+    const { queryByTestId } = render(
       <TestWrapper>
         <Feed />
       </TestWrapper>
     );
     
-    const likeBtn = screen.queryByTestId('like-btn');
+    const likeBtn = queryByTestId('like-btn');
     if (likeBtn) {
       await user.click(likeBtn);
       // In real app, this would update post likes
@@ -118,13 +113,13 @@ describe('Feed Component Tests', () => {
   it('should handle comment submission', async () => {
     const user = userEvent.setup();
     
-    render(
+    const { queryByTestId } = render(
       <TestWrapper>
         <Feed />
       </TestWrapper>
     );
     
-    const commentInput = screen.queryByTestId('comment-input');
+    const commentInput = queryByTestId('comment-input');
     if (commentInput) {
       await user.type(commentInput, 'Test comment');
       // In real app, this would add comment to post
