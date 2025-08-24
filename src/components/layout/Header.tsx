@@ -12,11 +12,10 @@ import { useAuthStore } from "@/store/auth";
 import { Home, Compass, Users, BookOpen, Camera, Mail, LogOut, User, TrendingUp } from "lucide-react";
 
 const navigation = [
-  { name: "Feed", href: "/feed", icon: Home },
-  { name: "Explore", href: "/explore", icon: Compass },
+  { name: "Explore", href: "/", icon: Compass },
+  { name: "Experience", href: "/experience", icon: Camera },
   { name: "Collaborate", href: "/collaborate", icon: Users },
   { name: "Learn", href: "/learn", icon: BookOpen },
-  { name: "Experience", href: "/experience", icon: Camera },
   { name: "Insights", href: "/insights", icon: TrendingUp },
   { name: "Contact", href: "/contact", icon: Mail },
 ];
@@ -39,7 +38,7 @@ export const Header = () => {
     <header className="sticky top-0 z-50 w-full border-b bg-background/80 backdrop-blur-md">
       <div className="container flex h-16 items-center justify-between">
         {/* Logo */}
-        <Link to="/feed" className="flex items-center space-x-2">
+        <Link to="/" className="flex items-center space-x-2">
           <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center">
             <span className="text-primary-foreground font-bold text-sm">A</span>
           </div>

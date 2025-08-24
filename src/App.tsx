@@ -6,8 +6,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { ErrorBoundary } from "@/components/ui/error-boundary";
 import { AuthGuard } from "@/components/auth/AuthGuard";
 import Login from "./pages/Login";
-import Feed from "./pages/Feed";
-import Explore from "./pages/Explore";
+import ExploreHome from "./pages/ExploreHome";
 import Profile from "./pages/Profile";
 import Collaborate from "./pages/Collaborate";
 import Learn from "./pages/Learn";
@@ -41,9 +40,9 @@ const App = () => (
             <Route path="/login" element={<Login />} />
             
             {/* Protected routes */}
-            <Route path="/" element={<Navigate to="/feed" replace />} />
-            <Route path="/feed" element={<AuthGuard><Feed /></AuthGuard>} />
-            <Route path="/explore" element={<AuthGuard><Explore /></AuthGuard>} />
+            <Route path="/" element={<AuthGuard><ExploreHome /></AuthGuard>} />
+            <Route path="/explore" element={<Navigate to="/" replace />} />
+            <Route path="/feed" element={<Navigate to="/" replace />} />
             <Route path="/profile/:username" element={<AuthGuard><Profile /></AuthGuard>} />
             <Route path="/collaborate" element={<AuthGuard><Collaborate /></AuthGuard>} />
             <Route path="/learn" element={<AuthGuard><Learn /></AuthGuard>} />
