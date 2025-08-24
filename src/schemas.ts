@@ -53,6 +53,13 @@ export const ArtworkSchema = z.object({
   price: MoneySchema.optional(),
   privacy: z.enum(["public", "private"]),
   location: z.string().max(100).optional(),
+  meta: z.object({
+    tags: z.array(z.string()).optional(),
+    colors: z.array(z.string()).optional(),
+    caption: z.string().optional(),
+    aiGenerated: z.boolean().optional(),
+    originalArtworkId: z.string().optional(),
+  }).passthrough().optional(),
   createdAt: ISOSchema,
 });
 
@@ -69,6 +76,13 @@ export const UpdateArtworkSchema = z.object({
   price: MoneySchema.optional(),
   privacy: z.enum(["public", "private"]).optional(),
   location: z.string().max(100).optional(),
+  meta: z.object({
+    tags: z.array(z.string()).optional(),
+    colors: z.array(z.string()).optional(),
+    caption: z.string().optional(),
+    aiGenerated: z.boolean().optional(),
+    originalArtworkId: z.string().optional(),
+  }).passthrough().optional(),
 });
 
 // Post schemas

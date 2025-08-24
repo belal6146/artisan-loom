@@ -27,11 +27,19 @@ export interface Artwork {
   title: string;
   description?: string;
   imageUrl: string;
-  category: "painting" | "sculpture" | "handicraft" | "other";
+  category: "painting" | "sculpture" | "handicraft" | "digital" | "photography" | "other";
   forSale: boolean;
   price?: Money;
   privacy: "public" | "private";
   location?: string;
+  meta?: {
+    tags?: string[];
+    colors?: string[];
+    caption?: string;
+    aiGenerated?: boolean;
+    originalArtworkId?: string;
+    [key: string]: unknown;
+  };
   createdAt: ISO;
 }
 

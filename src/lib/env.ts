@@ -5,6 +5,9 @@ const envSchema = z.object({
   VITE_API_URL: z.string().url().default("http://localhost:3000"),
   VITE_APP_NAME: z.string().default("Artisan"),
   VITE_APP_ENV: z.enum(["development", "staging", "production"]).default("development"),
+  VITE_AI_PROVIDER: z.enum(["openai", "stability", "local"]).default("local"),
+  VITE_AI_ENABLE_IMAGE: z.string().transform(val => val === "true").default("true"),
+  VITE_AI_ENABLE_EMBED: z.string().transform(val => val === "true").default("true"),
 });
 
 // Parse and validate environment variables
@@ -14,6 +17,9 @@ const parseEnv = () => {
       VITE_API_URL: import.meta.env.VITE_API_URL,
       VITE_APP_NAME: import.meta.env.VITE_APP_NAME,
       VITE_APP_ENV: import.meta.env.VITE_APP_ENV || import.meta.env.MODE,
+      VITE_AI_PROVIDER: import.meta.env.VITE_AI_PROVIDER,
+      VITE_AI_ENABLE_IMAGE: import.meta.env.VITE_AI_ENABLE_IMAGE,
+      VITE_AI_ENABLE_EMBED: import.meta.env.VITE_AI_ENABLE_EMBED,
     });
   } catch (error) {
     console.error("❌ Invalid environment configuration:", error);

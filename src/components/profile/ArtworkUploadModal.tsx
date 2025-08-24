@@ -8,12 +8,14 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
+import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
-import { useAuthStore } from "@/store/auth";
+import { aiClient } from "@/lib/aiClient";
 import { artworkAdapter } from "@/lib/data-service";
+import { useAuthStore } from "@/store/auth";
 import { log } from "@/lib/log";
 import { CreateArtworkSchema, type CreateArtwork } from "@/schemas";
-import { Upload, DollarSign } from "lucide-react";
+import { Upload, DollarSign, Tag } from "lucide-react";
 
 interface ArtworkUploadModalProps {
   onClose: () => void;
@@ -22,6 +24,8 @@ interface ArtworkUploadModalProps {
 
 export const ArtworkUploadModal = ({ onClose, onUpload }: ArtworkUploadModalProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [useAITagging, setUseAITagging] = useState(false);
+  const [isTagging, setIsTagging] = useState(false);
   const { user } = useAuthStore();
   const { toast } = useToast();
 
@@ -47,12 +51,37 @@ export const ArtworkUploadModal = ({ onClose, onUpload }: ArtworkUploadModalProp
 
     setIsSubmitting(true);
     try {
-      await artworkAdapter.create({
+      let artworkData = {
         ...data,
         userId: user.id,
         // Remove price if not for sale
         price: data.forSale ? data.price : undefined,
-      });
+      };
+
+      // Auto-tag with AI if enabled
+      if (useAITagging && data.imageUrl) {
+        setIsTagging(true);
+        try {
+          const tagResult = await aiClient.tagImage({ imageUrl: data.imageUrl });
+          artworkData.meta = {
+            tags: tagResult.tags,
+            colors: tagResult.colors,
+            caption: tagResult.caption,
+          };
+          
+          log.info("AI tagging completed", { 
+            tags: tagResult.tags.length,
+            colors: tagResult.colors.length 
+          });
+        } catch (error) {
+          log.error("AI tagging failed", { error: error.message });
+          // Continue without tagging
+        } finally {
+          setIsTagging(false);
+        }
+      }
+
+      await artworkAdapter.create(artworkData);
 
       log.info("Artwork uploaded successfully", { 
         title: data.title, 
@@ -63,7 +92,7 @@ export const ArtworkUploadModal = ({ onClose, onUpload }: ArtworkUploadModalProp
       
       toast({
         title: "Artwork uploaded",
-        description: "Your artwork has been added to your gallery.",
+        description: useAITagging ? "Your artwork has been uploaded and auto-tagged!" : "Your artwork has been added to your gallery.",
       });
 
       onUpload();
@@ -260,16 +289,30 @@ export const ArtworkUploadModal = ({ onClose, onUpload }: ArtworkUploadModalProp
             )}
           </div>
 
+          <div className="flex items-center space-x-2 p-4 bg-muted/50 rounded-lg">
+            <Checkbox
+              id="useAITagging"
+              checked={useAITagging}
+              onCheckedChange={(checked) => setUseAITagging(checked === true)}
+            />
+            <Label htmlFor="useAITagging" className="flex items-center cursor-pointer">
+              <Tag className="h-4 w-4 mr-2" />
+              Use AI to auto-tag this artwork
+            </Label>
+          </div>
+
           <div className="flex justify-end space-x-4">
             <Button type="button" variant="outline" onClick={onClose}>
               Cancel
             </Button>
             <Button
               type="submit"
-              disabled={isSubmitting}
+              disabled={isSubmitting || isTagging}
               className="min-w-[120px]"
             >
-              {isSubmitting ? (
+              {isTagging ? (
+                "Auto-tagging..."
+              ) : isSubmitting ? (
                 "Uploading..."
               ) : (
                 <>
