@@ -13,6 +13,23 @@ import { IMAGE_STYLES, type AIProvider } from "@/types/ai";
 
 const PROVIDERS: AIProvider[] = ["gemini", "openai", "deepseek", "local"];
 
+const STYLE_OPTIONS = [
+  { label: 'Impressionism', value: 'impressionism' },
+  { label: 'Baroque', value: 'baroque' },
+  { label: 'Cubism', value: 'cubism' },
+  { label: 'Surrealism', value: 'surrealism' },
+  { label: 'Ukiyo-e', value: 'ukiyoe' },
+  { label: 'Bauhaus', value: 'bauhaus' },
+  { label: 'Madhubani', value: 'madhubani' },
+  { label: 'Persian miniatures', value: 'persian' },
+  { label: 'Watercolor wash', value: 'watercolor' },
+  { label: 'Pointillism', value: 'pointillism' },
+  { label: 'Linocut', value: 'linocut' },
+  { label: 'Woodblock', value: 'woodblock' },
+  { label: 'Pastel', value: 'pastel' },
+  { label: 'Acrylic impasto', value: 'acrylic' },
+] as const;
+
 export default function AIStyleExplorerTab() {
   const [provider, setProvider] = useState<AIProvider>("gemini");
   const [style, setStyle] = useState<string | undefined>(undefined);
@@ -34,7 +51,7 @@ export default function AIStyleExplorerTab() {
 
     try {
       const result = await aiClient.generateImage({
-        prompt: `${prompt} in ${style} style`,
+        prompt: `${prompt} in ${STYLE_OPTIONS.find(s => s.value === style)?.label || style} style`,
         refImageUrl: refImage,
         style,
         negative,
@@ -103,9 +120,9 @@ export default function AIStyleExplorerTab() {
                 <SelectValue placeholder="Select style" />
               </SelectTrigger>
               <SelectContent className="bg-background border z-50">
-                {IMAGE_STYLES.map((s) => (
-                  <SelectItem key={s} value={s}>
-                    {s}
+                {STYLE_OPTIONS.map((option) => (
+                  <SelectItem key={option.value} value={option.value}>
+                    {option.label}
                   </SelectItem>
                 ))}
               </SelectContent>

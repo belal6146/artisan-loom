@@ -1,5 +1,6 @@
-import { useState, useEffect, Suspense, lazy } from "react";
+import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { Button } from "@/components/ui/button";
@@ -7,88 +8,69 @@ import { ProfileHeader } from "@/features/profile/header/ProfileHeader";
 import { ProfileTabs } from "@/features/profile/tabs/ProfileTabs";
 import AIStyleExplorerTab from "@/features/profile/AIStyleExplorerTab";
 import { useAuthStore } from "@/store/auth";
-import { userAdapter, dataService } from "@/lib/data-service";
+import { getUserByHandle } from "@/lib/users";
+import { artworkAdapter } from "@/lib/data-service";
 import { log } from "@/lib/log";
 import type { User, Artwork } from "@/types";
 
-// Lazy load tab components
-const OverviewTab = lazy(() => import("@/features/profile/overview/OverviewTab").then(m => ({ default: m.OverviewTab })));
-const ArtworkTab = lazy(() => import("@/features/profile/artwork/ArtworkTab").then(m => ({ default: m.ArtworkTab })));
-const UserFeedTab = lazy(() => import("@/features/profile/feed/UserFeedTab").then(m => ({ default: m.UserFeedTab })));
-const CollaborationsTab = lazy(() => import("@/features/profile/collab/CollaborationsTab").then(m => ({ default: m.CollaborationsTab })));
-const ConnectionsTab = lazy(() => import("@/features/profile/connections/ConnectionsTab").then(m => ({ default: m.ConnectionsTab })));
-const InsightsTab = lazy(() => import("@/features/profile/insights/InsightsTab").then(m => ({ default: m.InsightsTab })));
+// Simple placeholder components for tabs until we create them properly
+const SimpleTab = ({ children }: { children: React.ReactNode }) => (
+  <div className="p-6 text-center text-muted-foreground">{children}</div>
+);
 
 type TabValue = "overview" | "artwork" | "feed" | "collaborations" | "connections" | "insights" | "ai-explorer";
 
 export default function Profile() {
-  const { username } = useParams();
-  const [user, setUser] = useState<User | null>(null);
+  const { id: handle } = useParams();
   const [artworks, setArtworks] = useState<Artwork[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [notFound, setNotFound] = useState(false);
   const [activeTab, setActiveTab] = useState<TabValue>("overview");
   const { user: currentUser } = useAuthStore();
 
-  const isOwnProfile = user && currentUser && user.id === currentUser.id;
-  const isFollowing = currentUser && user && user.followers.includes(currentUser.id);
+  // Use React Query for user data with handle lookup
+  const { data: user, isLoading, error } = useQuery({
+    queryKey: ['user', handle],
+    queryFn: async () => {
+      if (!handle) throw new Error('No handle provided');
+      
+      log.info("Profile lookup", { handle });
+      const user = await getUserByHandle(handle);
+      
+      if (!user) {
+        log.warn("User not found", { handle });
+        throw new Error(`User not found: ${handle}`);
+      }
+      
+      log.info("Profile loaded", { userId: user.id, username: user.username });
+      return user;
+    },
+    enabled: !!handle,
+    retry: false
+  });
 
+  const isOwner = currentUser?.id === user?.id;
+
+  // Load artworks when user is available
   useEffect(() => {
-    const loadProfile = async () => {
-      if (!username) return;
-      setIsLoading(true);
-      setNotFound(false);
+    if (!user) return;
+    
+    const loadArtworks = async () => {
       try {
-        const users = await userAdapter.getAll();
-        const profileUser = users.find(u => u.username === username);
-        
-        if (!profileUser) {
-          log.error("User not found", { username });
-          setNotFound(true);
-          return;
-        }
-
-        setUser(profileUser);
-        const userArtworks = await dataService.getUserArtworks(profileUser.id, !!isOwnProfile);
+        const allArtworks = await artworkAdapter.getAll();
+        const userArtworks = allArtworks.filter(artwork => artwork.userId === user.id);
         setArtworks(userArtworks);
-        log.info("Profile loaded", { userId: profileUser.id, username });
       } catch (error) {
-        log.error("Failed to load profile", { username, error: error.message });
-        setNotFound(true);
-      } finally {
-        setIsLoading(false);
+        log.error("Failed to load artworks", { userId: user.id, error: error.message });
       }
     };
-
-    loadProfile();
-  }, [username, isOwnProfile]);
-
-  const handleFollow = async () => {
-    if (!user || !currentUser) return;
-    try {
-      if (isFollowing) {
-        await dataService.unfollowUser(currentUser.id, user.id);
-      } else {
-        await dataService.followUser(currentUser.id, user.id);
-      }
-      const updatedUser = await userAdapter.getById(user.id);
-      if (updatedUser) setUser(updatedUser);
-    } catch (error) {
-      log.error("Failed to follow/unfollow user", { userId: user.id, error: error.message });
-    }
-  };
-
-  const handleArtworkUpdate = async () => {
-    if (!user) return;
-    const userArtworks = await dataService.getUserArtworks(user.id, !!isOwnProfile);
-    setArtworks(userArtworks);
-  };
+    
+    loadArtworks();
+  }, [user]);
 
   if (isLoading) {
     return (
       <AppLayout>
-        <div className="container py-8">
-          <div className="max-w-4xl mx-auto flex items-center justify-center min-h-[400px]">
+        <div className="py-8">
+          <div className="max-w-6xl mx-auto flex items-center justify-center min-h-[400px]">
             <LoadingSpinner size="lg" />
           </div>
         </div>
@@ -96,15 +78,15 @@ export default function Profile() {
     );
   }
 
-  if (notFound || !user) {
+  if (error || !user) {
     return (
       <AppLayout>
-        <div className="container py-8">
-          <div className="max-w-4xl mx-auto flex flex-col items-center justify-center min-h-[400px] text-center space-y-4">
+        <div className="py-8">
+          <div className="max-w-6xl mx-auto flex flex-col items-center justify-center min-h-[400px] text-center space-y-4">
             <div className="text-6xl font-bold text-muted-foreground">404</div>
             <h1 className="text-2xl font-semibold">User not found</h1>
             <p className="text-muted-foreground">
-              The profile <span className="font-mono bg-muted px-2 py-1 rounded">@{username}</span> doesn't exist or has been removed.
+              The profile <span className="font-mono bg-muted px-2 py-1 rounded">@{handle}</span> doesn't exist or has been removed.
             </p>
             <Button onClick={() => window.history.back()} variant="outline">
               Go Back
@@ -115,64 +97,106 @@ export default function Profile() {
     );
   }
 
-  const renderTabContent = () => {
-    const tabProps = {
-      userId: user.id,
-      isOwnProfile: !!isOwnProfile,
-      className: "min-h-[400px]"
-    };
+  const filteredArtworks = artworks.filter(artwork => 
+    isOwner || artwork.privacy === 'public'
+  );
 
+  // Simple tab content renderer
+  const tabContent = () => {
     switch (activeTab) {
-      case "overview":
-        return <OverviewTab user={user} artworks={artworks} onArtworkUpdate={handleArtworkUpdate} {...tabProps} />;
-      case "artwork":
-        return <ArtworkTab artworks={artworks} onArtworkUpdate={handleArtworkUpdate} {...tabProps} />;
-      case "feed":
-        return <UserFeedTab {...tabProps} />;
-      case "collaborations":
-        return <CollaborationsTab {...tabProps} />;
-      case "connections":
-        return <ConnectionsTab userIds={{ followers: user.followers, following: user.following }} {...tabProps} />;
-      case "insights":
-        return <InsightsTab {...tabProps} />;
       case "ai-explorer":
         return <AIStyleExplorerTab />;
+      case "artwork":
+        return (
+          <SimpleTab>
+            <h3 className="text-lg font-semibold mb-2">Artworks</h3>
+            <p>Found {filteredArtworks.length} artworks</p>
+          </SimpleTab>
+        );
+      case "feed":
+        return <SimpleTab>User feed content coming soon</SimpleTab>;
+      case "collaborations":
+        return <SimpleTab>Collaborations content coming soon</SimpleTab>;
+      case "connections":
+        return <SimpleTab>Connections content coming soon</SimpleTab>;
+      case "insights":
+        return <SimpleTab>Insights content coming soon</SimpleTab>;
       default:
-        return <OverviewTab user={user} artworks={artworks} onArtworkUpdate={handleArtworkUpdate} {...tabProps} />;
+        return (
+          <SimpleTab>
+            <h3 className="text-lg font-semibold mb-4">Overview</h3>
+            <div className="grid md:grid-cols-2 gap-6 text-left max-w-4xl mx-auto">
+              <div className="bg-muted/50 rounded-lg p-4">
+                <h4 className="font-medium mb-2">Bio</h4>
+                <p className="text-sm">{user.bio || 'No bio available'}</p>
+              </div>
+              <div className="bg-muted/50 rounded-lg p-4">
+                <h4 className="font-medium mb-2">Stats</h4>
+                <div className="text-sm space-y-1">
+                  <p>Artworks: {filteredArtworks.length}</p>
+                  <p>Followers: {user.followers?.length || 0}</p>
+                  <p>Following: {user.following?.length || 0}</p>
+                </div>
+              </div>
+            </div>
+          </SimpleTab>
+        );
     }
   };
 
   return (
     <AppLayout>
-      <div className="container py-8">
-        <div className="max-w-4xl mx-auto space-y-8">
-          <ProfileHeader
-            user={user}
-            artworkCount={artworks.length}
-            postCount={0} // Would get from posts
-            salesCount={isOwnProfile ? 5 : undefined}
-            isOwnProfile={!!isOwnProfile}
-            isFollowing={!!isFollowing}
-            onFollow={handleFollow}
-            onEdit={() => setActiveTab("overview")}
-          />
+      <div className="py-8 space-y-8">
+        <div className="grid md:grid-cols-[200px,1fr] gap-6 items-start">
+          <div className="flex flex-col items-center md:items-start space-y-4">
+            <img 
+              src={user.avatar || '/placeholder.svg'} 
+              alt={user.name}
+              className="size-32 rounded-2xl object-cover shadow-lg"
+            />
+            {isOwner && (
+              <Button variant="outline" size="sm">
+                Edit Profile
+              </Button>
+            )}
+          </div>
+          
+          <div className="space-y-4">
+            <div>
+              <h1 className="text-3xl font-bold">{user.name}</h1>
+              <p className="text-muted-foreground">@{user.username}</p>
+              {user.location && (
+                <p className="text-sm text-muted-foreground mt-1">{user.location}</p>
+              )}
+            </div>
+            
+            <div className="flex gap-6 text-sm">
+              <span><strong>{filteredArtworks.length}</strong> Artworks</span>
+              <span><strong>{user.followers?.length || 0}</strong> Followers</span>
+              <span><strong>{user.following?.length || 0}</strong> Following</span>
+            </div>
+            
+            {user.bio && (
+              <p className="text-muted-foreground">{user.bio}</p>
+            )}
+          </div>
+        </div>
+        
+        <ProfileTabs
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
+          isOwnProfile={!!isOwner}
+          extraTabs={isOwner ? [
+            {
+              key: "ai-explorer",
+              label: "AI Explorer", 
+              element: <AIStyleExplorerTab />
+            }
+          ] : []}
+        />
 
-          <ProfileTabs
-            activeTab={activeTab}
-            onTabChange={setActiveTab}
-            isOwnProfile={!!isOwnProfile}
-            extraTabs={isOwnProfile ? [
-              {
-                key: "ai-explorer",
-                label: "AI Explorer", 
-                element: <AIStyleExplorerTab />
-              }
-            ] : []}
-          />
-
-          <Suspense fallback={<LoadingSpinner size="lg" className="py-8" />}>
-            {renderTabContent()}
-          </Suspense>
+        <div>
+          {tabContent()}
         </div>
       </div>
     </AppLayout>

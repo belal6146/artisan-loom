@@ -1,6 +1,5 @@
 // Dev seed for demo data - only runs in development
 import { storage } from "./storage";
-import { nanoid } from "nanoid";
 
 export function devSeed() {
   if (import.meta.env.PROD) return;
