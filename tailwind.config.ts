@@ -75,7 +75,12 @@ export default {
 			boxShadow: {
 				'subtle': 'var(--shadow-subtle)',
 				'soft': 'var(--shadow-soft)', 
-				'medium': 'var(--shadow-medium)'
+				'medium': 'var(--shadow-medium)',
+				'premium': 'var(--shadow-premium)'
+			},
+			backgroundImage: {
+				'gradient-brand': 'var(--gradient-brand)',
+				'gradient-subtle': 'var(--gradient-subtle)'
 			},
 			fontFamily: {
 				heading: 'var(--font-heading)',

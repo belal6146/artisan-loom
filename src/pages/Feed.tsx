@@ -1,9 +1,12 @@
 import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { Button } from "@/components/ui/button";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
-import { NewPost } from "@/components/feed/NewPost";
+import { HeroComposer } from "@/components/feed/HeroComposer";
 import { PostCard } from "@/components/feed/PostCard";
+import { EmptyFeedState } from "@/components/feed/EmptyFeedState";
+import { RecommendationsStrip } from "@/components/feed/RecommendationsStrip";
 import { useAuthStore } from "@/store/auth";
 import { dataService } from "@/lib/data-service";
 import { log } from "@/lib/log";
@@ -58,53 +61,88 @@ export default function Feed() {
 
   return (
     <AppLayout>
-      <div className="container py-8">
+      <div className="container py-6 md:py-8">
         <div className="max-w-2xl mx-auto space-y-8">
           {/* Header */}
-          <div className="flex items-center justify-between">
-            <h1 className="text-heading-lg">Your Feed</h1>
-            <Button 
-              variant="outline" 
-              size="sm" 
-              onClick={handleRefresh}
-              disabled={isRefreshing}
-            >
-              <RefreshCw className={`h-4 w-4 mr-2 ${isRefreshing ? "animate-spin" : ""}`} />
-              Refresh
-            </Button>
-          </div>
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3 }}
+            className="flex items-center justify-between"
+          >
+            <div>
+              <h1 className="text-heading-lg">Your Feed</h1>
+              <p className="text-caption text-muted-foreground mt-1">
+                Discover and share inspiring artwork
+              </p>
+            </div>
+            <motion.div whileTap={{ scale: 0.98 }}>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={handleRefresh}
+                disabled={isRefreshing}
+                className="gap-2"
+              >
+                <RefreshCw className={`h-4 w-4 ${isRefreshing ? "animate-spin" : ""}`} />
+                Refresh
+              </Button>
+            </motion.div>
+          </motion.div>
 
-          {/* Create Post */}
-          <NewPost onPostCreated={handlePostCreated} />
+          {/* Hero Composer */}
+          <HeroComposer onPostCreated={handlePostCreated} />
 
-          {/* Posts Feed */}
-          <div className="space-y-6">
+          {/* Posts Feed or Empty State */}
+          <div className="space-y-8">
             {posts.length === 0 ? (
-              <div className="text-center py-12">
-                <h3 className="text-heading mb-2">No posts yet</h3>
-                <p className="text-caption text-muted-foreground mb-6">
-                  Follow some artists to see their posts in your feed, or create your first post above.
-                </p>
-                <Button variant="outline" onClick={handleRefresh}>
-                  Check for new posts
-                </Button>
-              </div>
+              <>
+                <EmptyFeedState 
+                  onRefresh={handleRefresh} 
+                  isRefreshing={isRefreshing}
+                />
+                <RecommendationsStrip />
+              </>
             ) : (
               <>
-                {posts.map((post) => (
-                  <PostCard 
-                    key={post.id} 
-                    post={post} 
-                    onPostUpdate={loadPosts}
-                  />
-                ))}
+                <motion.div 
+                  className="space-y-6"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.4, delay: 0.2 }}
+                >
+                  {posts.map((post, index) => (
+                    <motion.div
+                      key={post.id}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.3, delay: index * 0.05 }}
+                    >
+                      <PostCard 
+                        post={post} 
+                        onPostUpdate={loadPosts}
+                      />
+                    </motion.div>
+                  ))}
+                </motion.div>
                 
                 {/* Load More */}
-                <div className="text-center pt-6">
-                  <Button variant="outline" size="lg">
-                    Load more posts
-                  </Button>
-                </div>
+                <motion.div 
+                  className="text-center pt-6"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.3, delay: 0.4 }}
+                >
+                  <motion.div whileTap={{ scale: 0.98 }}>
+                    <Button 
+                      variant="outline" 
+                      size="lg"
+                      className="px-8"
+                    >
+                      Load more posts
+                    </Button>
+                  </motion.div>
+                </motion.div>
               </>
             )}
           </div>
