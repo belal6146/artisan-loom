@@ -1,7 +1,7 @@
 // AI Types - Core interfaces for AI functionality
 import type { ID } from "@/types";
 
-export type AIProvider = "openai" | "stability" | "local";
+export type AIProvider = "openai" | "stability" | "local" | "gemini" | "deepseek";
 
 export interface GenerateImageInput {
   prompt: string;

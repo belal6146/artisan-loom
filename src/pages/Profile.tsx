@@ -5,6 +5,7 @@ import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { Button } from "@/components/ui/button";
 import { ProfileHeader } from "@/features/profile/header/ProfileHeader";
 import { ProfileTabs } from "@/features/profile/tabs/ProfileTabs";
+import AIStyleExplorerTab from "@/features/profile/AIStyleExplorerTab";
 import { useAuthStore } from "@/store/auth";
 import { userAdapter, dataService } from "@/lib/data-service";
 import { log } from "@/lib/log";
@@ -18,7 +19,7 @@ const CollaborationsTab = lazy(() => import("@/features/profile/collab/Collabora
 const ConnectionsTab = lazy(() => import("@/features/profile/connections/ConnectionsTab").then(m => ({ default: m.ConnectionsTab })));
 const InsightsTab = lazy(() => import("@/features/profile/insights/InsightsTab").then(m => ({ default: m.InsightsTab })));
 
-type TabValue = "overview" | "artwork" | "feed" | "collaborations" | "connections" | "insights";
+type TabValue = "overview" | "artwork" | "feed" | "collaborations" | "connections" | "insights" | "ai-explorer";
 
 export default function Profile() {
   const { username } = useParams();
@@ -134,6 +135,8 @@ export default function Profile() {
         return <ConnectionsTab userIds={{ followers: user.followers, following: user.following }} {...tabProps} />;
       case "insights":
         return <InsightsTab {...tabProps} />;
+      case "ai-explorer":
+        return <AIStyleExplorerTab />;
       default:
         return <OverviewTab user={user} artworks={artworks} onArtworkUpdate={handleArtworkUpdate} {...tabProps} />;
     }
@@ -158,6 +161,13 @@ export default function Profile() {
             activeTab={activeTab}
             onTabChange={setActiveTab}
             isOwnProfile={!!isOwnProfile}
+            extraTabs={isOwnProfile ? [
+              {
+                key: "ai-explorer",
+                label: "AI Explorer", 
+                element: <AIStyleExplorerTab />
+              }
+            ] : []}
           />
 
           <Suspense fallback={<LoadingSpinner size="lg" className="py-8" />}>
