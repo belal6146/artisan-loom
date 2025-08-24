@@ -2,16 +2,13 @@
 import { log } from "./log";
 import { storage } from "./storage";
 import type { 
-  User, CreateUser, UpdateUser,
-  Artwork, CreateArtwork, UpdateArtwork,
-  Post, CreatePost,
-  Comment, CreateComment,
-  Collaboration, CreateCollaboration,
-  Resource, CreateResource,
-  Event, CreateEvent,
-  Purchase, CreatePurchase,
-  ID
+  User, Artwork, Post, Comment, Collaboration, Event, Purchase, Resource, ID
 } from "@/types";
+import type { 
+  CreateUser, UpdateUser, CreateArtwork, UpdateArtwork,
+  CreatePost, CreateComment, CreateCollaboration,
+  CreateResource, CreateEvent, CreatePurchase
+} from "@/schemas";
 
 // Storage keys
 const STORAGE_KEYS = {
@@ -112,7 +109,7 @@ export const artworkAdapter = new LocalStorageAdapter<Artwork, CreateArtwork, Up
 export const postAdapter = new LocalStorageAdapter<Post, CreatePost>(STORAGE_KEYS.POSTS);
 export const commentAdapter = new LocalStorageAdapter<Comment, CreateComment>(STORAGE_KEYS.COMMENTS);
 export const collaborationAdapter = new LocalStorageAdapter<Collaboration, CreateCollaboration>(STORAGE_KEYS.COLLABORATIONS);
-export const resourceAdapter = new LocalStorageAdapter<Resource, CreateResource>(STORAGE_KEYS.RESOURCES);
+export const resourceAdapter = new LocalStorageAdapter<Resource, CreateResource, Partial<Resource>>(STORAGE_KEYS.RESOURCES);
 export const eventAdapter = new LocalStorageAdapter<Event, CreateEvent>(STORAGE_KEYS.EVENTS);
 export const purchaseAdapter = new LocalStorageAdapter<Purchase, CreatePurchase>(STORAGE_KEYS.PURCHASES);
 

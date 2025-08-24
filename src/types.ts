@@ -44,6 +44,7 @@ export interface Post {
   createdAt: ISO;
   likes: number;
   commentIds: ID[];
+  likedBy: ID[];
 }
 
 export interface Comment {
@@ -53,6 +54,21 @@ export interface Comment {
   text: string;
   createdAt: ISO;
   likes: number;
+  likedBy?: ID[];
+}
+
+export interface Resource {
+  id: ID;
+  title: string;
+  description?: string;
+  type: "video" | "image" | "pdf";
+  url: string;
+  tags: string[];
+  authorId: ID;
+  createdAt: ISO;
+  likes: number;
+  commentIds: ID[];
+  likedBy: ID[];
 }
 
 export interface Collaboration {

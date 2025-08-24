@@ -37,6 +37,8 @@ export const UpdateUserSchema = z.object({
   bio: z.string().max(500).optional(),
   birthday: ISOSchema.optional(),
   avatar: z.string().url().optional(),
+  followers: z.array(IDSchema).optional(),
+  following: z.array(IDSchema).optional(),
 });
 
 // Artwork schemas
