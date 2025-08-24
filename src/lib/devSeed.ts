@@ -3,14 +3,31 @@ import { userAdapter, artworkAdapter, postAdapter, purchaseAdapter, dataService 
 import { useAuthStore } from "@/store/auth";
 import { track } from "./track";
 
-const generateId = () => `${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-
 export async function ensureDemoData() {
-  if (import.meta.env.PROD) return;
+  if (!import.meta.env.DEV) return;
 
   const existing = await userAdapter.getAll();
   const haveDemo = existing.some(u => u.username === "demo_user");
-  if (haveDemo && existing.length >= 10) return;
+  
+  if (haveDemo && existing.length >= 10) {
+    // Ensure demo_user is logged in
+    const demoUser = existing.find(u => u.username === "demo_user")!;
+    const authUser = {
+      id: demoUser.id,
+      email: "demo@artisan.app",
+      name: demoUser.name,
+      username: demoUser.username,
+      avatar: demoUser.avatar
+    };
+    
+    useAuthStore.setState({
+      user: authUser,
+      isAuthenticated: true,
+      isLoading: false,
+      error: null
+    });
+    return;
+  }
 
   console.log("🌱 Seeding 10 users with content...");
 
@@ -85,14 +102,11 @@ export async function ensureDemoData() {
     avatar: buyer.avatar
   };
   
-  useAuthStore.getState().login(authUser).catch(() => {
-    // Manual set for demo
-    useAuthStore.setState({
-      user: authUser,
-      isAuthenticated: true,
-      isLoading: false,
-      error: null
-    });
+  useAuthStore.setState({
+    user: authUser,
+    isAuthenticated: true,
+    isLoading: false,
+    error: null
   });
 
   track("dev_seed_completed", { userCount: users.length });

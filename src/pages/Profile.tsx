@@ -197,13 +197,13 @@ export default function Profile() {
           activeTab={activeTab}
           onTabChange={setActiveTab}
           isOwnProfile={!!isOwner}
-          extraTabs={isOwner ? [
+          extraTabs={[
             {
               key: "ai-explorer",
               label: "AI Explorer", 
               element: <AIStyleExplorerTab />
             }
-          ] : []}
+          ]}
         />
 
         <div>

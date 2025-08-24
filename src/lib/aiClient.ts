@@ -1,6 +1,7 @@
 // AI Client - Frontend interface for AI services
 import { apiClient } from "./api-client";
 import { log } from "./log";
+import { env } from "./env";
 import type {
   GenerateImageInput,
   GenerateImageOutput,
@@ -16,12 +17,27 @@ import type {
 class AIClient {
   async generateImage(input: GenerateImageInput): Promise<GenerateImageOutput> {
     try {
-      log.info("Generating image", { prompt: input.prompt.substring(0, 50) });
+      log.info("Generating image", { prompt: input.prompt.substring(0, 50), provider: env.VITE_AI_PROVIDER });
+      
+      // If AI is disabled or provider is local, return mock
+      if (!env.VITE_AI_ENABLE_IMAGE || env.VITE_AI_PROVIDER === "local") {
+        const hash = btoa([input.prompt, input.style, input.negative, input.refImageUrl ?? ""].join("|")).slice(0, 12);
+        return {
+          url: `https://picsum.photos/seed/${hash}/1024/768`,
+          meta: { provider: "local", aiGenerated: true }
+        };
+      }
+
       const response = await apiClient.post<GenerateImageOutput>("/ai/generate-image", input);
       return response;
     } catch (error) {
       log.error("Failed to generate image", { error: error.message });
-      throw error;
+      // Fallback to local mock on error
+      const hash = btoa([input.prompt, input.style ?? "", input.negative ?? ""].join("|")).slice(0, 12);
+      return {
+        url: `https://picsum.photos/seed/${hash}/1024/768`,
+        meta: { provider: "local-fallback", aiGenerated: true }
+      };
     }
   }
 
