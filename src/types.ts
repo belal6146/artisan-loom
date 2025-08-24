@@ -3,6 +3,7 @@
 
 export type ID = string;
 export type ISO = string;
+export type Period = "7d" | "30d" | "90d" | "365d" | "all";
 export type EventType = "gallery" | "competition" | "meetup" | "class" | "seminar" | "volunteer";
 export type MediaCategory = 
   | "painting" | "drawing" | "printmaking" | "sculpture" | "ceramics"
@@ -21,9 +22,46 @@ export interface User {
   avatar?: string;
   bio?: string;
   birthday?: ISO;
+  location?: string;
+  website?: string;
   followers: ID[];
   following: ID[];
   createdAt: ISO;
+}
+
+export interface ProfileSummary {
+  id: ID;
+  name: string;
+  username: string;
+  avatar?: string;
+  bio?: string;
+  location?: string;
+  website?: string;
+  followers: number;
+  following: number;
+  posts: number;
+  artworks: number;
+  sales?: number; // sales only if owner
+}
+
+export interface ProfileInsights {
+  userId: ID;
+  period: Period;
+  creator: {
+    posts: number;
+    likes: number;
+    comments: number;
+    followersDelta: number;
+    topPosts: ID[];
+  };
+  buyer?: { // owner-only
+    purchases: number;
+    totalSpent: Money;
+    avgPrice?: Money;
+    topCategories: { category: Artwork["category"]; count: number }[];
+    topArtists: { userId: ID; name: string; count: number }[];
+    timeline: { purchasedAt: ISO; artworkId: ID; price: Money }[];
+  };
 }
 
 export interface Artwork {

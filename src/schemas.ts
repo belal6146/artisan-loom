@@ -1,6 +1,7 @@
 import { z } from 'zod';
 
 // Core type schemas
+export const PeriodSchema = z.enum(['7d', '30d', '90d', '365d', 'all']);
 export const EventTypeSchema = z.enum(['gallery', 'competition', 'meetup', 'class', 'seminar', 'volunteer']);
 
 export const MediaCategorySchema = z.enum([
@@ -25,9 +26,57 @@ export const UserSchema = z.object({
   avatar: z.string().optional(),
   bio: z.string().optional(),
   birthday: z.string().optional(),
+  location: z.string().optional(),
+  website: z.string().optional(),
   followers: z.array(z.string()),
   following: z.array(z.string()),
   createdAt: z.string(),
+});
+
+export const ProfileSummarySchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  username: z.string(),
+  avatar: z.string().optional(),
+  bio: z.string().optional(),
+  location: z.string().optional(),
+  website: z.string().optional(),
+  followers: z.number(),
+  following: z.number(),
+  posts: z.number(),
+  artworks: z.number(),
+  sales: z.number().optional(),
+});
+
+export const ProfileInsightsSchema = z.object({
+  userId: z.string(),
+  period: PeriodSchema,
+  creator: z.object({
+    posts: z.number(),
+    likes: z.number(),
+    comments: z.number(),
+    followersDelta: z.number(),
+    topPosts: z.array(z.string()),
+  }),
+  buyer: z.object({
+    purchases: z.number(),
+    totalSpent: MoneySchema,
+    avgPrice: MoneySchema.optional(),
+    topCategories: z.array(z.object({
+      category: z.enum(['painting', 'sculpture', 'handicraft', 'digital', 'photography', 'other']),
+      count: z.number(),
+    })),
+    topArtists: z.array(z.object({
+      userId: z.string(),
+      name: z.string(),
+      count: z.number(),
+    })),
+    timeline: z.array(z.object({
+      purchasedAt: z.string(),
+      artworkId: z.string(),
+      price: MoneySchema,
+    })),
+  }).optional(),
 });
 
 export const AuthUserSchema = z.object({
@@ -316,11 +365,14 @@ export const EventFiltersSchema = z.object({
 });
 
 // Type inference
+export type Period = z.infer<typeof PeriodSchema>;
 export type EventType = z.infer<typeof EventTypeSchema>;
 export type MediaCategory = z.infer<typeof MediaCategorySchema>;
 export type Rating = z.infer<typeof RatingSchema>;
 export type Money = z.infer<typeof MoneySchema>;
 export type User = z.infer<typeof UserSchema>;
+export type ProfileSummary = z.infer<typeof ProfileSummarySchema>;
+export type ProfileInsights = z.infer<typeof ProfileInsightsSchema>;
 export type AuthUser = z.infer<typeof AuthUserSchema>;
 export type CreateUser = z.infer<typeof CreateUserSchema>;
 export type UpdateUser = z.infer<typeof UpdateUserSchema>;
