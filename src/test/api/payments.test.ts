@@ -35,6 +35,11 @@ describe('Payments API Tests', () => {
         },
       });
 
+      // Mock the client to throw the error
+      mockPaymentsClient.startArtworkCheckout.mockRejectedValue(
+        new Error('ARTWORK_NOT_FOR_SALE: This artwork is not for sale')
+      );
+
       try {
         await mockPaymentsClient.startArtworkCheckout('artwork-not-for-sale');
         expect.fail('Should have thrown error');

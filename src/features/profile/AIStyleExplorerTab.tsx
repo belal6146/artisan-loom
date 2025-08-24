@@ -9,6 +9,7 @@ import { Slider } from "@/components/ui/slider";
 import { track } from "@/lib/track";
 import { aiClient } from "@/lib/aiClient";
 import { log } from "@/lib/log";
+import { env } from "@/lib/env";
 import { IMAGE_STYLES, type AIProvider } from "@/types/ai";
 
 const PROVIDERS = ["local", "openai", "gemini", "deepseek"] as const;
@@ -42,14 +43,23 @@ export default function AIStyleExplorerTab() {
 
   const canGenerate = !!style && prompt.trim().length > 6;
 
+  // Debug environment variables
+  console.log("AI Environment:", {
+    VITE_AI_PROVIDER: env.VITE_AI_PROVIDER,
+    VITE_AI_ENABLE_IMAGE: env.VITE_AI_ENABLE_IMAGE,
+    VITE_API_URL: env.VITE_API_URL
+  });
+
   const handleGenerate = async () => {
     if (!canGenerate) return;
     
+    console.log("Starting AI generation...", { provider, style, prompt });
     setIsGenerating(true);
     setGeneratedImage(null);
     track("ai_generate", { provider, style, promptLength: prompt.length });
 
     try {
+      console.log("Calling aiClient.generateImage...");
       const result = await aiClient.generateImage({
         prompt: `${prompt} in ${STYLE_OPTIONS.find(s => s.value === style)?.label || style} style`,
         refImageUrl: refImage,
@@ -58,9 +68,11 @@ export default function AIStyleExplorerTab() {
         strength: strength[0]
       });
       
+      console.log("AI generation result:", result);
       setGeneratedImage(result.url);
       log.info("AI generation successful", { provider, style });
     } catch (error) {
+      console.error("AI generation error:", error);
       log.error("AI generation failed", { provider, style, error: error.message });
       alert("Generation failed. Please try a different prompt or provider.");
     } finally {

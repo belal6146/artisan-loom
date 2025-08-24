@@ -4,7 +4,7 @@ import { z } from "zod";
 const envSchema = z.object({
   VITE_API_URL: z.string().url().default("http://localhost:3000"),
   VITE_APP_NAME: z.string().default("Artisan"),
-  VITE_APP_ENV: z.enum(["development", "staging", "production"]).default("development"),
+  VITE_APP_ENV: z.enum(["development", "staging", "production", "test"]).default("development"),
   VITE_AI_PROVIDER: z.enum(["openai", "stability", "local"]).default("local"),
   VITE_AI_ENABLE_IMAGE: z.string().transform(val => val === "true").default("true"),
   VITE_AI_ENABLE_EMBED: z.string().transform(val => val === "true").default("true"),
@@ -38,4 +38,4 @@ export const env = parseEnv();
 export const isDevelopment = env.VITE_APP_ENV === "development";
 export const isProduction = env.VITE_APP_ENV === "production";
 export const isStaging = env.VITE_APP_ENV === "staging";
-export const isTest = import.meta.env.MODE === "test";
+export const isTest = env.VITE_APP_ENV === "test" || import.meta.env.MODE === "test";

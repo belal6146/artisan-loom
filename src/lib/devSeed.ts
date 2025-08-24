@@ -2,6 +2,7 @@
 import { userAdapter, artworkAdapter, postAdapter, purchaseAdapter, dataService } from "./data-service";
 import { useAuthStore } from "@/store/auth";
 import { track } from "./track";
+import { seedReport } from "./seedReport";
 
 export async function ensureDemoData() {
   if (!import.meta.env.DEV) return;
@@ -27,6 +28,17 @@ export async function ensureDemoData() {
         error: null
       });
     }
+    
+    // Log current seed counts
+    await seedReport({
+      users: userAdapter,
+      artworks: artworkAdapter,
+      posts: postAdapter,
+      events: { list: () => [] }, // Mock for now
+      tools: { list: () => [] }, // Mock for now
+      purchases: purchaseAdapter,
+    });
+    
     return;
   }
 
@@ -143,5 +155,16 @@ export async function ensureDemoData() {
 
   localStorage.setItem("seed:v2", "true");
   track("dev_seed_completed", { userCount: users.length });
+  
+  // Log final seed counts
+  await seedReport({
+    users: userAdapter,
+    artworks: artworkAdapter,
+    posts: postAdapter,
+    events: { list: () => [] }, // Mock for now
+    tools: { list: () => [] }, // Mock for now
+    purchases: purchaseAdapter,
+  });
+  
   console.log("✅ Dev seed completed - 10 users with content created");
 }

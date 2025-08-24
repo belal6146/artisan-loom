@@ -71,122 +71,121 @@ const getCompensationIcon = (type: string) => {
 export default function Collaborate() {
   return (
     <AppLayout>
-      <div className="container py-8">
-        <div className="space-y-8">
-          {/* Header */}
+      <section className="space-y-6">
+        {/* Header */}
+        <header className="rounded-2xl p-6 bg-background border">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div>
-              <h1 className="text-display">Collaborate</h1>
-              <p className="text-body-lg text-muted-foreground max-w-2xl">
-                Join creative projects, find collaborators, and bring ideas to life together.
-              </p>
+              <h1 className="text-3xl font-semibold">Collaborate</h1>
+              <p className="text-muted-foreground mt-1">Join creative projects, find collaborators, and bring ideas to life together.</p>
             </div>
             <Button className="shrink-0">
               <Plus className="h-4 w-4 mr-2" />
               Create Project
             </Button>
           </div>
+        </header>
 
-          {/* Collaborations Grid */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {mockCollaborations.map((collab) => (
-              <Card key={collab.id} className="shadow-soft hover:shadow-medium transition-all duration-300">
-                {collab.coverImage && (
-                  <div className="aspect-[2/1] overflow-hidden rounded-t-lg">
-                    <img
-                      src={collab.coverImage}
-                      alt={collab.name}
-                      className="w-full h-full object-cover"
-                      loading="lazy"
-                    />
-                  </div>
-                )}
-                
-                <CardHeader className="pb-4">
-                  <div className="flex items-start justify-between">
-                    <div className="space-y-2">
-                      <CardTitle className="text-heading">{collab.name}</CardTitle>
-                      <div className="flex items-center space-x-2">
-                        <Avatar className="h-6 w-6">
-                          <AvatarImage src={collab.creator.avatar} alt={collab.creator.name} />
-                          <AvatarFallback className="text-xs">
-                            {collab.creator.name.split(' ').map(n => n[0]).join('')}
-                          </AvatarFallback>
-                        </Avatar>
-                        <span className="text-caption text-muted-foreground">
-                          by {collab.creator.name}
-                        </span>
-                      </div>
-                    </div>
-                    
-                    <Badge 
-                      variant={collab.compensationType === "paid" ? "default" : "secondary"}
-                      className="flex items-center space-x-1"
-                    >
-                      {getCompensationIcon(collab.compensationType)}
-                      <span className="capitalize">{collab.compensationType.replace('-', ' ')}</span>
-                    </Badge>
-                  </div>
-                </CardHeader>
-                
-                <CardContent className="space-y-4">
-                  <p className="text-body text-muted-foreground line-clamp-3">
-                    {collab.description}
-                  </p>
-                  
-                  {/* Skills */}
-                  <div className="flex flex-wrap gap-2">
-                    {collab.skills.map((skill, index) => (
-                      <Badge key={index} variant="outline" className="text-xs">
-                        {skill}
-                      </Badge>
-                    ))}
-                  </div>
-                  
-                  {/* Details */}
-                  <div className="space-y-2 text-caption text-muted-foreground">
-                    {collab.compensation && (
-                      <div className="flex items-center space-x-2">
-                        <DollarSign className="h-4 w-4" />
-                        <span>{collab.compensation}</span>
-                      </div>
-                    )}
-                    
+        {/* Collaborations Grid */}
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          {mockCollaborations.map((collab) => (
+            <Card key={collab.id} className="rounded-2xl border bg-background/60 backdrop-blur-sm shadow-sm hover:-translate-y-0.5 transition will-change-transform">
+              {collab.coverImage && (
+                <div className="aspect-[2/1] overflow-hidden rounded-t-2xl">
+                  <img
+                    src={collab.coverImage}
+                    alt={collab.name}
+                    width={400}
+                    height={200}
+                    className="w-full h-full object-cover"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </div>
+              )}
+              
+              <CardHeader className="pb-4">
+                <div className="flex items-start justify-between">
+                  <div className="space-y-2">
+                    <CardTitle className="text-heading">{collab.name}</CardTitle>
                     <div className="flex items-center space-x-2">
-                      <MapPin className="h-4 w-4" />
-                      <span>{collab.location}</span>
-                    </div>
-                    
-                    <div className="flex items-center space-x-2">
-                      <Calendar className="h-4 w-4" />
-                      <span>Deadline: {new Date(collab.deadline).toLocaleDateString()}</span>
-                    </div>
-                    
-                    <div className="flex items-center space-x-2">
-                      <Users className="h-4 w-4" />
-                      <span>
-                        {collab.participants}/{collab.maxParticipants || '∞'} participants
+                      <Avatar className="h-10 w-10 rounded-xl">
+                        <AvatarImage src={collab.creator.avatar} alt={collab.creator.name} />
+                        <AvatarFallback className="text-sm">{(collab.creator.name ?? "?").slice(0,2)}</AvatarFallback>
+                      </Avatar>
+                      <span className="text-caption text-muted-foreground">
+                        by {collab.creator.name}
                       </span>
                     </div>
                   </div>
                   
-                  <div className="flex gap-2 pt-2">
-                    <Button className="flex-1">Apply to Join</Button>
-                    <Button variant="outline">Learn More</Button>
+                  <Badge 
+                    variant={collab.compensationType === "paid" ? "default" : "secondary"}
+                    className="flex items-center space-x-1"
+                  >
+                    {getCompensationIcon(collab.compensationType)}
+                    <span className="capitalize">{collab.compensationType.replace('-', ' ')}</span>
+                  </Badge>
+                </div>
+              </CardHeader>
+              
+              <CardContent className="space-y-4">
+                <p className="text-body text-muted-foreground line-clamp-3">
+                  {collab.description}
+                </p>
+                
+                {/* Skills */}
+                <div className="flex flex-wrap gap-2">
+                  {collab.skills.map((skill, index) => (
+                    <Badge key={index} variant="outline" className="text-xs">
+                      {skill}
+                    </Badge>
+                  ))}
+                </div>
+                
+                {/* Details */}
+                <div className="space-y-2 text-caption text-muted-foreground">
+                  {collab.compensation && (
+                    <div className="flex items-center space-x-2">
+                      <DollarSign className="h-4 w-4" />
+                      <span>{collab.compensation}</span>
+                    </div>
+                  )}
+                  
+                  <div className="flex items-center space-x-2">
+                    <MapPin className="h-4 w-4" />
+                    <span>{collab.location}</span>
                   </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-
-          {/* Load More */}
-          <div className="text-center">
-            <Button variant="outline" size="lg">
-              Load more projects
-            </Button>
-          </div>
+                  
+                  <div className="flex items-center space-x-2">
+                    <Calendar className="h-4 w-4" />
+                    <span>Deadline: {new Date(collab.deadline).toLocaleDateString()}</span>
+                  </div>
+                  
+                  <div className="flex items-center space-x-2">
+                    <Users className="h-4 w-4" />
+                    <span>
+                      {collab.participants}/{collab.maxParticipants || '∞'} participants
+                    </span>
+                  </div>
+                </div>
+                
+                <div className="flex gap-2 pt-2">
+                  <Button className="flex-1">Apply to Join</Button>
+                  <Button variant="outline">Learn More</Button>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
         </div>
-      </div>
+
+        {/* Load More */}
+        <div className="text-center">
+          <Button variant="outline" size="lg">
+            Load more projects
+          </Button>
+        </div>
+      </section>
     </AppLayout>
   );
 }
